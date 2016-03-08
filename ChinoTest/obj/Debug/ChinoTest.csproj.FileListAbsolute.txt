@@ -1,0 +1,11 @@
+c:\Users\Paolo\documents\visual studio 2013\Projects\Chino\ChinoTest\bin\Debug\ChinoTest.dll
+c:\Users\Paolo\documents\visual studio 2013\Projects\Chino\ChinoTest\bin\Debug\ChinoTest.pdb
+c:\Users\Paolo\documents\visual studio 2013\Projects\Chino\ChinoTest\bin\Debug\Chino.dll
+c:\Users\Paolo\documents\visual studio 2013\Projects\Chino\ChinoTest\bin\Debug\RestSharp.dll
+c:\Users\Paolo\documents\visual studio 2013\Projects\Chino\ChinoTest\bin\Debug\Chino.pdb
+c:\Users\Paolo\documents\visual studio 2013\Projects\Chino\ChinoTest\bin\Debug\RestSharp.xml
+c:\Users\Paolo\documents\visual studio 2013\Projects\Chino\ChinoTest\obj\Debug\ChinoTest.csprojResolveAssemblyReference.cache
+c:\Users\Paolo\documents\visual studio 2013\Projects\Chino\ChinoTest\obj\Debug\ChinoTest.dll
+c:\Users\Paolo\documents\visual studio 2013\Projects\Chino\ChinoTest\obj\Debug\ChinoTest.pdb
+c:\Users\Paolo\documents\visual studio 2013\Projects\Chino\ChinoTest\bin\Debug\Newtonsoft.Json.dll
+c:\Users\Paolo\documents\visual studio 2013\Projects\Chino\ChinoTest\bin\Debug\Newtonsoft.Json.xml
