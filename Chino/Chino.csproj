@@ -53,6 +53,7 @@
     <Compile Include="ChinoAPI.cs" />
     <Compile Include="ChinoBaseAPI.cs" />
     <Compile Include="ChinoApiException.cs" />
+    <Compile Include="Documents.cs" />
     <Compile Include="Users.cs" />
     <Compile Include="UserSchemas.cs" />
     <Compile Include="Schemas.cs" />

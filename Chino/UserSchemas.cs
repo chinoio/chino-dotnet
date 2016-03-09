@@ -21,8 +21,7 @@ namespace Chino
         {
             RestRequest request = new RestRequest("/user_schemas?offset=" + offset, Method.GET);
             IRestResponse response = client.Execute(request);
-            String content = response.Content.ToString();
-            JObject o = JObject.Parse(content);
+            JObject o = JObject.Parse(response.Content.ToString());
             if ((int)o["result_code"] == 200)
             {
                 return ((JObject)o["data"]).ToObject<GetUserSchemasResponse>();
@@ -37,8 +36,7 @@ namespace Chino
         {
             RestRequest request = new RestRequest("/user_schemas/" + userSchemaId, Method.GET);
             IRestResponse response = client.Execute(request);
-            String content = response.Content.ToString();
-            JObject o = JObject.Parse(content);
+            JObject o = JObject.Parse(response.Content.ToString());
             if ((int)o["result_code"] == 200)
             {
                 GetUserSchemaResponse userSchemaResponse = ((JObject)o["data"]).ToObject<GetUserSchemaResponse>();
@@ -56,8 +54,7 @@ namespace Chino
             RestRequest request = new RestRequest("/user_schemas", Method.POST);
             request.AddJsonBody(userSchemaRequest);
             IRestResponse response = client.Execute(request);
-            String content = response.Content.ToString();
-            JObject o = JObject.Parse(content);
+            JObject o = JObject.Parse(response.Content.ToString());
             if ((int)o["result_code"] == 200)
             {
                 GetUserSchemaResponse userSchemaResponse = ((JObject)o["data"]).ToObject<GetUserSchemaResponse>();
@@ -77,8 +74,7 @@ namespace Chino
             userSchemaRequest.structure = userSchemaStructure;
             request.AddJsonBody(userSchemaRequest);
             IRestResponse response = client.Execute(request);
-            String content = response.Content.ToString();
-            JObject o = JObject.Parse(content);
+            JObject o = JObject.Parse(response.Content.ToString());
             if ((int)o["result_code"] == 200)
             {
                 GetUserSchemaResponse userSchemaResponse = ((JObject)o["data"]).ToObject<GetUserSchemaResponse>();
@@ -107,8 +103,7 @@ namespace Chino
             userSchemaRequest.structure = userSchemaStructure;
             request.AddJsonBody(userSchemaRequest);
             IRestResponse response = client.Execute(request);
-            String content = response.Content.ToString();
-            JObject o = JObject.Parse(content);
+            JObject o = JObject.Parse(response.Content.ToString());
             if ((int)o["result_code"] == 200)
             {
                 GetUserSchemaResponse userSchemaResponse = ((JObject)o["data"]).ToObject<GetUserSchemaResponse>();
@@ -125,8 +120,7 @@ namespace Chino
             RestRequest request = new RestRequest("/user_schemas/"+userSchemaId, Method.PUT);
             request.AddJsonBody(userSchemaRequest);
             IRestResponse response = client.Execute(request);
-            String content = response.Content.ToString();
-            JObject o = JObject.Parse(content);
+            JObject o = JObject.Parse(response.Content.ToString());
             if ((int)o["result_code"] == 200)
             {
                 GetUserSchemaResponse userSchemaResponse = ((JObject)o["data"]).ToObject<GetUserSchemaResponse>();
@@ -146,8 +140,7 @@ namespace Chino
             userSchemaRequest.structure = userSchemaStructure;
             request.AddJsonBody(userSchemaRequest);
             IRestResponse response = client.Execute(request);
-            String content = response.Content.ToString();
-            JObject o = JObject.Parse(content);
+            JObject o = JObject.Parse(response.Content.ToString());
             if ((int)o["result_code"] == 200)
             {
                 GetUserSchemaResponse userSchemaResponse = ((JObject)o["data"]).ToObject<GetUserSchemaResponse>();
@@ -176,8 +169,7 @@ namespace Chino
             userSchemaRequest.structure = userSchemaStructure;
             request.AddJsonBody(userSchemaRequest);
             IRestResponse response = client.Execute(request);
-            String content = response.Content.ToString();
-            JObject o = JObject.Parse(content);
+            JObject o = JObject.Parse(response.Content.ToString());
             if ((int)o["result_code"] == 200)
             {
                 GetUserSchemaResponse userSchemaResponse = ((JObject)o["data"]).ToObject<GetUserSchemaResponse>();
@@ -201,8 +193,7 @@ namespace Chino
                 request = new RestRequest("/user_schemas/" + userSchemaId, Method.DELETE);
             }
             IRestResponse response = client.Execute(request);
-            String content = response.Content.ToString();
-            JObject o = JObject.Parse(content);
+            JObject o = JObject.Parse(response.Content.ToString());
             return (String)o["result"];
         }
 

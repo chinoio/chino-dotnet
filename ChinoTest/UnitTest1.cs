@@ -15,6 +15,7 @@ namespace ChinoTest
         String SCHEMA_ID_2 = "";
         String SCHEMA_ID_3 = "";
         String USER_ID = "";
+        String DOCUMENT_ID = "";
         String REPOSITORY_ID = "";
         String customerId = "354e3d83-5cb4-461a-b0f2-fc135c8d1a9c";
         String customerKey = "5e44d79a-dd96-448d-b3d2-78ed76cc6548";
@@ -147,6 +148,43 @@ namespace ChinoTest
             USER_ID = user.user_id;
             Console.WriteLine(user.ToStringExtension());
             Console.WriteLine(user.attributes["test_string"]);
+        }
+
+        [TestMethod]
+        public void TestDocuments()
+        {
+            ChinoAPI chino = new ChinoAPI(hostUrl, customerId, customerKey);
+            GetRepositoriesResponse repos = chino.repositories.list(0);
+            foreach (Repository r in repos.repositories)
+            {
+                Console.WriteLine(chino.repositories.delete(r.repository_id, true));
+            }
+            Repository repo = chino.repositories.create("test_repo_description");
+            REPOSITORY_ID = repo.repository_id;
+            Schema schema = chino.schemas.create(REPOSITORY_ID, "schema_description_2", typeof(SchemaStructureSample));
+            SCHEMA_ID_1 = schema.schema_id;
+            Dictionary<String, Object> content = new Dictionary<string, object>();
+            content.Add("test_integer", 123);
+            content.Add("test_string", "string_value");
+            content.Add("test_boolean", true);
+            content.Add("test_date", "1997-12-03");
+            Document document = chino.documents.create(content, SCHEMA_ID_1);
+            DOCUMENT_ID = document.document_id;
+            Console.WriteLine(document.ToStringExtension());
+            Console.WriteLine(chino.documents.read(DOCUMENT_ID).ToStringExtension());
+            content = new Dictionary<string, object>();
+            content.Add("test_integer", 1233);
+            content.Add("test_string", "string_value_updated");
+            content.Add("test_boolean", false);
+            content.Add("test_date", "1993-02-04");
+            document = chino.documents.update(content, DOCUMENT_ID);
+            Console.WriteLine(document.ToStringExtension());
+            GetDocumentsResponse documentsResponse = chino.documents.list(SCHEMA_ID_1, 0);
+            Console.WriteLine(documentsResponse.ToStringExtension());
+            foreach (Document d in documentsResponse.documents)
+            {
+                Console.WriteLine(chino.documents.delete(d.document_id, true));
+            }
         }
     }
 

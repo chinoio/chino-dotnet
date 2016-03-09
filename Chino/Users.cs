@@ -21,8 +21,7 @@ namespace Chino
         {
             RestRequest request = new RestRequest("/user_schemas/" + userSchemaId + "/users?offset=" + offset, Method.GET);
             IRestResponse response = client.Execute(request);
-            String content = response.Content.ToString();
-            JObject o = JObject.Parse(content);
+            JObject o = JObject.Parse(response.Content.ToString());
             if ((int)o["result_code"] == 200)
             {
                 return ((JObject)o["data"]).ToObject<GetUsersResponse>();
@@ -37,8 +36,7 @@ namespace Chino
         {
             RestRequest request = new RestRequest("/users/" + userId, Method.GET);
             IRestResponse response = client.Execute(request);
-            String content = response.Content.ToString();
-            JObject o = JObject.Parse(content);
+            JObject o = JObject.Parse(response.Content.ToString());
             if ((int)o["result_code"] == 200)
             {
                 GetUserResponse userResponse = ((JObject)o["data"]).ToObject<GetUserResponse>();
@@ -60,8 +58,7 @@ namespace Chino
             userRequest.attributes = attributes;
             request.AddJsonBody(userRequest);
             IRestResponse response = client.Execute(request);
-            String content = response.Content.ToString();
-            JObject o = JObject.Parse(content);
+            JObject o = JObject.Parse(response.Content.ToString());
             if ((int)o["result_code"] == 200)
             {
                 GetUserResponse userResponse = ((JObject)o["data"]).ToObject<GetUserResponse>();
@@ -82,8 +79,7 @@ namespace Chino
             userRequest.attributes = attributes;
             request.AddJsonBody(userRequest);
             IRestResponse response = client.Execute(request);
-            String content = response.Content.ToString();
-            JObject o = JObject.Parse(content);
+            JObject o = JObject.Parse(response.Content.ToString());
             if ((int)o["result_code"] == 200)
             {
                 GetUserResponse userResponse = ((JObject)o["data"]).ToObject<GetUserResponse>();
@@ -107,8 +103,7 @@ namespace Chino
                 request = new RestRequest("/users/" + userId, Method.DELETE);
             }
             IRestResponse response = client.Execute(request);
-            String content = response.Content.ToString();
-            JObject o = JObject.Parse(content);
+            JObject o = JObject.Parse(response.Content.ToString());
             return (String)o["result"];
         }
 

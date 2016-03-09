@@ -14,6 +14,7 @@ namespace Chino
 {
     public class ChinoAPI {
 
+        public Documents documents;
         public Users users;
         public UserSchemas userSchemas;
         public Repositories repositories;
@@ -48,6 +49,7 @@ namespace Chino
         }
 
         private void initObject(){
+            documents = new Documents(client);
             users = new Users(client);
             userSchemas = new UserSchemas(client);
             repositories = new Repositories(client);
@@ -113,25 +115,39 @@ namespace Chino
                 else
                 {
                     var value = property.GetValue(obj, null);
-                    if(value is IList){
-                        foreach(var x in (IList)value){
-                            sb.Append(System.Environment.NewLine);
-                            sb.Append(x.ToStringExtension());
-                        }
-                    } else if(value.GetType().Namespace=="Chino"){
-                        sb.Append(System.Environment.NewLine);
-                        sb.Append(value.ToStringExtension());
-                    } else if (value is IDictionary){
-                        foreach (var x in (IDictionary)value)
-                        {
-                            sb.Append(System.Environment.NewLine);
-                            sb.Append(x.ToStringExtension());
-                        }
+                    if (value == null)
+                    {
+                        sb.Append("null");
                     }
                     else
                     {
-                        sb.Append(value);
+                        if (value is IList)
+                        {
+                            foreach (var x in (IList)value)
+                            {
+                                sb.Append(System.Environment.NewLine);
+                                sb.Append(x.ToStringExtension());
+                            }
+                        }
+                        else if (value.GetType().Namespace == "Chino")
+                        {
+                            sb.Append(System.Environment.NewLine);
+                            sb.Append(value.ToStringExtension());
+                        }
+                        else if (value is IDictionary)
+                        {
+                            foreach (var x in (IDictionary)value)
+                            {
+                                sb.Append(System.Environment.NewLine);
+                                sb.Append(x.ToStringExtension());
+                            }
+                        }
+                        else
+                        {
+                            sb.Append(value);
+                        }
                     }
+                    
                 }
                 sb.Append(System.Environment.NewLine);
             }
