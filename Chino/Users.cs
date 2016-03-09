@@ -143,7 +143,7 @@ namespace Chino
     public class GetUsersResponse
     {
         [JsonProperty(PropertyName = "count")]
-        public int count { get; set; }
+        public int count { get; set; } 
         [JsonProperty(PropertyName = "total_count")]
         public int total_count { get; set; }
         [JsonProperty(PropertyName = "limit")]
