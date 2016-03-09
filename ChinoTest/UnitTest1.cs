@@ -148,6 +148,9 @@ namespace ChinoTest
             USER_ID = user.user_id;
             Console.WriteLine(user.ToStringExtension());
             Console.WriteLine(user.attributes["test_string"]);
+            LoggedUser loggedUser = chino.auth.loginUser("Giovanni", "password", customerId);
+            chino.initClient(hostUrl, loggedUser.access_token);
+            //Console.WriteLine(chino.userSchemas.read(USER_SCHEMA_ID_1).ToStringExtension());
         }
 
         [TestMethod]

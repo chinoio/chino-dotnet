@@ -14,6 +14,7 @@ namespace Chino
 {
     public class ChinoAPI {
 
+        public Auth auth;
         public Documents documents;
         public Users users;
         public UserSchemas userSchemas;
@@ -25,30 +26,42 @@ namespace Chino
         public ChinoAPI(string hostUrl, string customerId, string customerKey)
         {
             initClient(hostUrl, customerId, customerKey);
-            initObject();
         }
 
         //Constructor called when a user needs to be authenticated
         public ChinoAPI(string hostUrl)
         {
             initClient(hostUrl);
-            initObject();
         }
 
-        private void initClient(string hostUrl, string customerId, string customerKey)
+        //Function called to init the client with the Customer authentication
+        public void initClient(String hostUrl, String customerId, String customerKey)
         {
             ChinoClient chinoClient = new ChinoClient(hostUrl);
             chinoClient.setAuth(customerId, customerKey);
             client = chinoClient.getClient();
+            initObject();
         }
 
-        private void initClient(string hostUrl)
+        //Function called to init the client with the User authentication
+        public void initClient(String hostUrl, String token)
+        {
+            ChinoClient chinoClient = new ChinoClient(hostUrl);
+            chinoClient.setAuth(token);
+            client = chinoClient.getClient();
+            initObject();
+        }
+
+        //Function private called in the constructor of ChinoApi if you want to login as User but you don't have the token
+        private void initClient(String hostUrl)
         {
             ChinoClient chinoClient = new ChinoClient(hostUrl);
             client = chinoClient.getClient();
+            initObject();
         }
 
         private void initObject(){
+            auth = new Auth(client);
             documents = new Documents(client);
             users = new Users(client);
             userSchemas = new UserSchemas(client);
@@ -88,7 +101,7 @@ namespace Chino
         public void setAuth(string token)
         {
             //Here the encoded string for the authentication is created
-            var tot = "ACCES_TOKEN:" + token;
+            var tot = "ACCESS_TOKEN:" + token;
             byte[] bytesToEncode = Encoding.UTF8.GetBytes(tot);
             string encodedText = Convert.ToBase64String(bytesToEncode);
             client.RemoveDefaultParameter("Authorization");
