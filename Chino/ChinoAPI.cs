@@ -14,6 +14,9 @@ namespace Chino
 {
     public class ChinoAPI {
 
+        public Search search;
+        public Groups groups;
+        public Collections collections;
         public Auth auth;
         public Documents documents;
         public Users users;
@@ -61,6 +64,9 @@ namespace Chino
         }
 
         private void initObject(){
+            search = new Search(client);
+            groups = new Groups(client);
+            collections = new Collections(client);
             auth = new Auth(client);
             documents = new Documents(client);
             users = new Users(client);

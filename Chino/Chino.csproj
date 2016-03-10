@@ -51,9 +51,11 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="ChinoAPI.cs" />
-    <Compile Include="ChinoBaseAPI.cs" />
     <Compile Include="ChinoApiException.cs" />
     <Compile Include="Auth.cs" />
+    <Compile Include="Search.cs" />
+    <Compile Include="Groups.cs" />
+    <Compile Include="Collections.cs" />
     <Compile Include="Documents.cs" />
     <Compile Include="Users.cs" />
     <Compile Include="UserSchemas.cs" />
@@ -63,6 +65,9 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <WCFMetadata Include="Service References\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

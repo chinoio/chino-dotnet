@@ -37,6 +37,36 @@ namespace Chino
                 throw new ChinoApiException((String)o["message"]);
             }
         }
+
+        public User checkUserStatus()
+        {
+            RestRequest request = new RestRequest("/auth/info", Method.GET);
+            IRestResponse response = client.Execute(request);
+            JObject o = JObject.Parse(response.Content.ToString());
+            if ((int)o["result_code"] == 200)
+            {
+                GetUserResponse userResponse = ((JObject)o["data"]).ToObject<GetUserResponse>();
+                return userResponse.user;
+            }
+            else
+            {
+                throw new ChinoApiException((String)o["message"]);
+            }
+        }
+
+        public LogoutResponse logoutUser(){
+            RestRequest request = new RestRequest("/auth/logout", Method.POST);
+            IRestResponse response = client.Execute(request);
+            JObject o = JObject.Parse(response.Content.ToString());
+            if ((int)o["result_code"] == 200)
+            {
+                return ((JObject)o["data"]).ToObject<LogoutResponse>();
+            }
+            else
+            {
+                throw new ChinoApiException((String)o["message"]);
+            }
+        }
     }
 
     public class LoggedUser
@@ -65,5 +95,19 @@ namespace Chino
     {
         [JsonProperty(PropertyName = "user")]
         public LoggedUser user { get; set; }
+    }
+
+    public class Logout
+    {
+        [JsonProperty(PropertyName = "username")]
+        public String username { get; set; }
+        [JsonProperty(PropertyName = "user_id")]
+        public String user_id { get; set; }
+    }
+
+    public class LogoutResponse
+    {
+        [JsonProperty(PropertyName = "logout")]
+        public Logout logout { get; set; }
     }
 }

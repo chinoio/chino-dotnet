@@ -16,7 +16,9 @@ namespace ChinoTest
         String SCHEMA_ID_3 = "";
         String USER_ID = "";
         String DOCUMENT_ID = "";
+        String COLLECTION_ID = "";
         String REPOSITORY_ID = "";
+        String GROUP_ID = "";
         String customerId = "354e3d83-5cb4-461a-b0f2-fc135c8d1a9c";
         String customerKey = "5e44d79a-dd96-448d-b3d2-78ed76cc6548";
         String hostUrl = "https://api.test.chino.io/v1";
@@ -151,7 +153,9 @@ namespace ChinoTest
             LoggedUser loggedUser = chino.auth.loginUser("Giovanni", "password", customerId);
             //When you have logged the user and you have the token you need to init the client passing the token in the function
             chino.initClient(hostUrl, loggedUser.access_token);
-
+            Console.WriteLine(chino.auth.checkUserStatus().ToStringExtension());
+            Console.WriteLine(chino.auth.logoutUser().ToStringExtension());
+            chino.initClient(hostUrl, customerId, customerKey);
             //Console.WriteLine(chino.userSchemas.read(USER_SCHEMA_ID_1).ToStringExtension());
         }
 
@@ -178,7 +182,7 @@ namespace ChinoTest
             Console.WriteLine(document.ToStringExtension());
             Console.WriteLine(chino.documents.read(DOCUMENT_ID).ToStringExtension());
             content = new Dictionary<string, object>();
-            content.Add("test_integer", 1233);
+            content.Add("test_integer", 1234);
             content.Add("test_string", "string_value_updated");
             content.Add("test_boolean", false);
             content.Add("test_date", "1993-02-04");
@@ -190,6 +194,133 @@ namespace ChinoTest
             {
                 Console.WriteLine(chino.documents.delete(d.document_id, true));
             }
+        }
+
+        [TestMethod]
+        public void TestCollections()
+        {
+            ChinoAPI chino = new ChinoAPI(hostUrl, customerId, customerKey);
+            GetRepositoriesResponse repos = chino.repositories.list(0);
+            foreach (Repository r in repos.repositories)
+            {
+                Console.WriteLine(chino.repositories.delete(r.repository_id, true));
+            }
+            GetCollectionsResponse collections = chino.collections.list(0);
+            foreach (Collection c in collections.collections)
+            {
+                Console.WriteLine(chino.collections.delete(c.collection_id, true));
+            }
+            Repository repo = chino.repositories.create("test_repo_description");
+            REPOSITORY_ID = repo.repository_id;
+            Schema schema = chino.schemas.create(REPOSITORY_ID, "schema_description_2", typeof(SchemaStructureSample));
+            SCHEMA_ID_1 = schema.schema_id;
+            Dictionary<String, Object> content = new Dictionary<string, object>();
+            content.Add("test_integer", 123);
+            content.Add("test_string", "string_value");
+            content.Add("test_boolean", true);
+            content.Add("test_date", "1997-12-03");
+            Document document = chino.documents.create(content, SCHEMA_ID_1);
+            DOCUMENT_ID = document.document_id;
+            content = new Dictionary<string, object>();
+            content.Add("test_integer", 1234);
+            content.Add("test_string", "string_value_2");
+            content.Add("test_boolean", false);
+            content.Add("test_date", "1993-02-04");
+            document = chino.documents.create(content, SCHEMA_ID_1);
+            String DOCUMENT_ID_2 = document.document_id;
+            Collection collection = chino.collections.create("collection_name");
+            Console.WriteLine(collection.ToStringExtension());
+            COLLECTION_ID = collection.collection_id;
+            Console.WriteLine(chino.collections.addDocument(COLLECTION_ID, DOCUMENT_ID));
+            Console.WriteLine(chino.collections.addDocument(COLLECTION_ID, DOCUMENT_ID_2));
+            Console.WriteLine(chino.collections.listDocuments(COLLECTION_ID, 0).ToStringExtension());
+            chino.collections.update(COLLECTION_ID, "collection_name_updated");
+            Console.WriteLine(chino.collections.read(COLLECTION_ID).ToStringExtension());
+            Console.WriteLine(chino.collections.list(0).ToStringExtension());
+        }
+
+        [TestMethod]
+        public void TestGroups()
+        {
+            ChinoAPI chino = new ChinoAPI(hostUrl, customerId, customerKey);
+            GetUserSchemasResponse userschemas = chino.userSchemas.list(0);
+            foreach (UserSchema u in userschemas.user_schemas)
+            {
+                Console.WriteLine(chino.userSchemas.delete(u.user_schema_id, true));
+            }
+            GetGroupsResponse groups = chino.groups.list(0);
+            foreach (Group g in groups.groups)
+            {
+                Console.WriteLine(chino.groups.delete(g.group_id, true));
+            }
+            UserSchema userSchema = chino.userSchemas.create("user_schema_description_2", typeof(SchemaStructureSample));
+            USER_SCHEMA_ID_1 = userSchema.user_schema_id;
+            Dictionary<String, Object> attributes = new Dictionary<string, object>();
+            attributes.Add("test_integer", 123);
+            attributes.Add("test_string", "string_value");
+            attributes.Add("test_boolean", true);
+            attributes.Add("test_date", "1997-12-03");
+            User user = chino.users.create("Giovanni", "password", attributes, USER_SCHEMA_ID_1);
+            Console.WriteLine(user.ToStringExtension());
+            USER_ID = user.user_id;
+            Console.WriteLine(user.ToStringExtension());
+            attributes = new Dictionary<string,object>();
+            attributes.Add("test_attribute_1", "test_value");
+            attributes.Add("test_attribute_2", 123);
+            Group group = chino.groups.create("test_group_name", attributes);
+            GROUP_ID = group.group_id;
+            Console.WriteLine(group.ToStringExtension());
+            attributes = new Dictionary<string, object>();
+            attributes.Add("test_attribute_1", "test_value_updated");
+            Console.WriteLine(chino.groups.update(GROUP_ID, "test_group_name_updated", attributes).ToStringExtension());
+            Console.WriteLine(chino.groups.addUserToGroup(USER_ID, GROUP_ID));
+            Console.WriteLine(chino.groups.addUserSchemaToGroup(USER_SCHEMA_ID_1, GROUP_ID));
+            Console.WriteLine(chino.groups.removeUserFromGroup(USER_ID, GROUP_ID));
+            Console.WriteLine(chino.groups.removeUserSchemaFromGroup(USER_SCHEMA_ID_1, GROUP_ID));
+        }
+
+        [TestMethod]
+        public void TestSearch()
+        {
+            ChinoAPI chino = new ChinoAPI(hostUrl, customerId, customerKey);
+            GetRepositoriesResponse repos = chino.repositories.list(0);
+            foreach (Repository r in repos.repositories)
+            {
+                Console.WriteLine(chino.repositories.delete(r.repository_id, true));
+            }
+            Repository repo = chino.repositories.create("test_repo_description");
+            REPOSITORY_ID = repo.repository_id;
+            Schema schema = chino.schemas.create(REPOSITORY_ID, "schema_description_2", typeof(SchemaStructureSample));
+            SCHEMA_ID_1 = schema.schema_id;
+            Dictionary<String, Object> content = new Dictionary<string, object>();
+            content.Add("test_integer", 123);
+            content.Add("test_string", "string_value");
+            content.Add("test_boolean", true);
+            content.Add("test_date", "1997-12-03");
+            Document document = chino.documents.create(content, SCHEMA_ID_1);
+            DOCUMENT_ID = document.document_id;
+            Console.WriteLine(document.ToStringExtension());
+            content = new Dictionary<string, object>();
+            content.Add("test_integer", 1234);
+            content.Add("test_string", "string_value_2");
+            content.Add("test_boolean", false);
+            content.Add("test_date", "1997-12-03");
+            chino.documents.create(content, SCHEMA_ID_1);
+            Console.WriteLine(document.ToStringExtension());
+            SearchRequest searchRequest = new SearchRequest();
+            searchRequest.schema_id = SCHEMA_ID_1;
+            searchRequest.result_type = "FULL_CONTENT";
+            searchRequest.without_index = true;
+            searchRequest.filter_type = "and";
+            List<SortOption> sort = new List<SortOption>();
+            sort.Add(new SortOption("test_string", "asc"));
+            searchRequest.sort = sort;
+            List<FilterOption> filter = new List<FilterOption>();
+            filter.Add(new FilterOption("test_integer", "gt", 123, false));
+            searchRequest.filter = filter;
+            Console.WriteLine(chino.search.searchDocuments(searchRequest).ToStringExtension());
+            filter.Add(new FilterOption("test_boolean", "eq", true, false));
+            Console.WriteLine(chino.search.searchDocuments(SCHEMA_ID_1, "FULL_CONTENT", true, "or", sort, filter).ToStringExtension());
         }
     }
 
