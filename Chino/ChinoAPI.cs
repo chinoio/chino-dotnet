@@ -9,11 +9,14 @@ using System.Net;
 using RestSharp;
 using Newtonsoft.Json;
 using System.Collections;
+using System.IO;
 
 namespace Chino
 {
     public class ChinoAPI {
 
+        public Blobs blobs;
+        public Permissions permissions;
         public Search search;
         public Groups groups;
         public Collections collections;
@@ -64,6 +67,9 @@ namespace Chino
         }
 
         private void initObject(){
+
+            blobs = new Blobs(client);
+            permissions = new Permissions(client);
             search = new Search(client);
             groups = new Groups(client);
             collections = new Collections(client);
@@ -140,7 +146,12 @@ namespace Chino
                     }
                     else
                     {
-                        if (value is IList)
+                        if (value is Newtonsoft.Json.Linq.JArray || value is Newtonsoft.Json.Linq.JProperty || value is Newtonsoft.Json.Linq.JObject)
+                        {
+                            sb.Append(System.Environment.NewLine);
+                            sb.Append(value.ToString());
+                        }
+                        else if (value is IList)
                         {
                             foreach (var x in (IList)value)
                             {
@@ -195,7 +206,7 @@ namespace Chino
             else if(t == typeof(TimeSpan)){
                 return "time";
             }
-            else if(t == typeof(FileParameter)){
+            else if(t == typeof(FileStream)){
                 return "blob";
             } else {
                 throw new ChinoApiException("error, invalid type: "+t+".");

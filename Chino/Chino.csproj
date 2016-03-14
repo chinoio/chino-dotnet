@@ -53,6 +53,8 @@
     <Compile Include="ChinoAPI.cs" />
     <Compile Include="ChinoApiException.cs" />
     <Compile Include="Auth.cs" />
+    <Compile Include="Blobs.cs" />
+    <Compile Include="Permissions.cs" />
     <Compile Include="Search.cs" />
     <Compile Include="Groups.cs" />
     <Compile Include="Collections.cs" />
