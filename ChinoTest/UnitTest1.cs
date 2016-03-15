@@ -25,9 +25,9 @@ namespace ChinoTest
         String COLLECTION_ID = "";
         String REPOSITORY_ID = "";
         String GROUP_ID = "";
-        String customerId = "354e3d83-5cb4-461a-b0f2-fc135c8d1a9c";
-        String customerKey = "5e44d79a-dd96-448d-b3d2-78ed76cc6548";
-        String hostUrl = "https://api.test.chino.io/v1";
+        String customerId = "2d568db6-9f1b-443d-8e52-cf7214863b4a";
+        String customerKey = "fa31c20e-1628-4833-8595-7869def8f21a";
+        String hostUrl = "https://api.chino.io/v1";
 
         [TestMethod]
         public void TestRepositories()

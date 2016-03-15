@@ -23,7 +23,7 @@ namespace Chino
 
         public GetDocumentsResponse searchDocuments(SearchRequest searchRequest)
         {
-            RestRequest request = new RestRequest("/search/", Method.POST);
+            RestRequest request = new RestRequest("/search", Method.POST);
             request.AddJsonBody(searchRequest);
             IRestResponse response = client.Execute(request);
             JObject o = JObject.Parse(response.Content.ToString());
