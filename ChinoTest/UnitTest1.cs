@@ -310,7 +310,7 @@ namespace ChinoTest
             content.Add("test_integer", 1234);
             content.Add("test_string", "string_value_2");
             content.Add("test_boolean", false);
-            content.Add("test_date", "1997-12-03");
+            content.Add("test_date", "1997-12-04");
             chino.documents.create(content, SCHEMA_ID_1);
             Console.WriteLine(document.ToStringExtension());
             SearchRequest searchRequest = new SearchRequest();
@@ -327,6 +327,9 @@ namespace ChinoTest
             Console.WriteLine(chino.search.searchDocuments(searchRequest).ToStringExtension());
             filter.Add(new FilterOption("test_boolean", "eq", true, false));
             Console.WriteLine(chino.search.searchDocuments(SCHEMA_ID_1, "FULL_CONTENT", true, "or", sort, filter).ToStringExtension());
+            GetDocumentsResponse documents = chino.search.where("test_integer").gt(123).and("test_date").eq("1997-12-04").sortAscBy("test_string").search(SCHEMA_ID_1);
+            Console.WriteLine("Test search method with functions:");
+            Console.WriteLine(documents.ToStringExtension());
         }
 
         [TestMethod]
