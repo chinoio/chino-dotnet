@@ -21,9 +21,9 @@ namespace Chino
             this.client = client;
         }
 
-        public GetDocumentsResponse searchDocuments(SearchRequest searchRequest)
+        public GetDocumentsResponse searchDocuments(String schemaId, SearchRequest searchRequest)
         {
-            RestRequest request = new RestRequest("/search", Method.POST);
+            RestRequest request = new RestRequest("/search/documents/"+schemaId, Method.POST);
             request.AddJsonBody(searchRequest);
             IRestResponse response = client.Execute(request);
             JObject o = JObject.Parse(response.Content.ToString());
@@ -39,13 +39,11 @@ namespace Chino
 
         public GetDocumentsResponse searchDocuments(String schemaId, String resultType, Boolean withoutIndex, String filterType, List<SortOption> sort, List<FilterOption> filter){
             SearchRequest searchRequest = new SearchRequest();
-            searchRequest.schema_id = schemaId;
             searchRequest.result_type = resultType;
-            searchRequest.without_index = withoutIndex;
             searchRequest.filter_type = filterType;
             searchRequest.sort = sort;
             searchRequest.filter = filter;
-            return searchDocuments(searchRequest);
+            return searchDocuments(schemaId, searchRequest);
         }
 
         /*
@@ -79,13 +77,6 @@ namespace Chino
             return this;
         }
 
-        //This is called when you want to specify the withoutIndex value. If you don't call this function the default value is true
-        public Search withoutIndex(Boolean value)
-        {
-            searchRequest.without_index = value;
-            return this;
-        }
-
         /* 
          * This is the first function that needs to be called and sets result_type and without_index variables at their default value.
          * It also calls the filterOperation function which creates a new FilterOption and sets its "field" value;
@@ -93,7 +84,6 @@ namespace Chino
         public Search where(String field)
         {
             searchRequest.result_type = "FULL_CONTENT";
-            searchRequest.without_index = true;
             filterOperation(field);
             return this;
         }
@@ -105,9 +95,8 @@ namespace Chino
         public GetDocumentsResponse search(String schemaId)
         {
             if (searchRequest.filter_type == null)
-                searchRequest.filter_type = "or";
-            searchRequest.schema_id = schemaId;     
-            return searchDocuments(searchRequest);
+                searchRequest.filter_type = "or";  
+            return searchDocuments(schemaId, searchRequest);
         }
 
         //This function is called if you want to make a request with filter_type set to "and" 
@@ -175,14 +164,6 @@ namespace Chino
             filterOption.type = "lte";
             return this;
         }
-
-        //This function finds the filterOption in the filter List and sets its case_sensitive value to true
-        public Search isCaseSensitive()
-        {
-            filter[filter.IndexOf(filterOption)].case_sensitive=true;
-            searchRequest.filter = filter;
-            return this;
-        }
     }
 
     public class FilterOption
@@ -193,15 +174,12 @@ namespace Chino
         public String type { get; set; }
         [JsonProperty(PropertyName = "value")]
         public Object value { get; set; }
-        [JsonProperty(PropertyName = "case_sensitive")]
-        public Boolean case_sensitive { get; set; }
         public FilterOption() { }
-        public FilterOption(String field, String type, Object value, Boolean case_sensitive)
+        public FilterOption(String field, String type, Object value)
         {
             this.field = field;
             this.type = type;
             this.value = value;
-            this.case_sensitive = case_sensitive;
         }
     }
 
@@ -221,12 +199,8 @@ namespace Chino
 
     public class SearchRequest
     {
-        [JsonProperty(PropertyName = "schema_id")]
-        public String schema_id { get; set; }
         [JsonProperty(PropertyName = "result_type")]
         public String result_type { get; set; }
-        [JsonProperty(PropertyName = "without_index")]
-        public Boolean without_index { get; set; }
         [JsonProperty(PropertyName = "filter_type")]
         public String filter_type { get; set; }
         [JsonProperty(PropertyName = "sort")]

@@ -258,6 +258,8 @@ namespace Chino
         public String name { get; set; }
         [JsonProperty(PropertyName = "type")]
         public String type { get; set; }
+        [JsonProperty(PropertyName = "indexed")]
+        public Boolean indexed { get; set; }
 
         public UserSchemaField() { }
 
@@ -265,6 +267,14 @@ namespace Chino
         {
             this.name = name;
             this.type = type;
+            this.indexed = false;
+        }
+
+        public UserSchemaField(String name, String type, Boolean indexed)
+        {
+            this.name = name;
+            this.type = type;
+            this.indexed = indexed;
         }
     }
 }

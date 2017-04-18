@@ -16,6 +16,7 @@ namespace Chino
     public class ChinoAPI {
 
         public Blobs blobs;
+        public Applications applications;
         public Permissions permissions;
         public Search search;
         public Groups groups;
@@ -68,6 +69,7 @@ namespace Chino
 
         private void initObject(){
 
+            applications = new Applications(client);
             blobs = new Blobs(client);
             permissions = new Permissions(client);
             search = new Search(client);
@@ -113,12 +115,9 @@ namespace Chino
         public void setAuth(string token)
         {
             //Here the encoded string for the authentication is created
-            var tot = "ACCESS_TOKEN:" + token;
-            byte[] bytesToEncode = Encoding.UTF8.GetBytes(tot);
-            string encodedText = Convert.ToBase64String(bytesToEncode);
             client.RemoveDefaultParameter("Authorization");
             //In this way you set a default header that exists in every call you do with this client
-            client.AddDefaultHeader("Authorization", "Basic " + encodedText);
+            client.AddDefaultHeader("Authorization", "Bearer " + token);
         }
 
     }

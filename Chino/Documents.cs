@@ -32,6 +32,21 @@ namespace Chino
             }
         }
 
+        public GetDocumentsResponse listWithFullContent(String schemaId, int offset)
+        {
+            RestRequest request = new RestRequest("/schemas/" + schemaId + "/documents?full_document=true&offset=" + offset, Method.GET);
+            IRestResponse response = client.Execute(request);
+            JObject o = JObject.Parse(response.Content.ToString());
+            if ((int)o["result_code"] == 200)
+            {
+                return ((JObject)o["data"]).ToObject<GetDocumentsResponse>();
+            }
+            else
+            {
+                throw new ChinoApiException((String)o["message"]);
+            }
+        }
+
         public Document read(String documentId)
         {
             RestRequest request = new RestRequest("/documents/" + documentId, Method.GET);

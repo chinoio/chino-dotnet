@@ -91,6 +91,25 @@ namespace Chino
             }
         }
 
+        public User updateSomeFields(String userId, Dictionary<String, Object> attributes)
+        {
+            RestRequest request = new RestRequest("/users/" + userId, Method.PATCH);
+            PatchUserRequest userRequest = new PatchUserRequest();
+            userRequest.attributes = attributes;
+            request.AddJsonBody(userRequest);
+            IRestResponse response = client.Execute(request);
+            JObject o = JObject.Parse(response.Content.ToString());
+            if ((int)o["result_code"] == 200)
+            {
+                GetUserResponse userResponse = ((JObject)o["data"]).ToObject<GetUserResponse>();
+                return userResponse.user;
+            }
+            else
+            {
+                throw new ChinoApiException((String)o["message"]);
+            }
+        }
+
         public String delete(string userId, bool force)
         {
             RestRequest request;
@@ -155,6 +174,12 @@ namespace Chino
         public String username { get; set; }
         [JsonProperty(PropertyName = "password")]
         public String password { get; set; }
+        [JsonProperty(PropertyName = "attributes")]
+        public Dictionary<String, Object> attributes { get; set; }
+    }
+
+    public class PatchUserRequest
+    {
         [JsonProperty(PropertyName = "attributes")]
         public Dictionary<String, Object> attributes { get; set; }
     }

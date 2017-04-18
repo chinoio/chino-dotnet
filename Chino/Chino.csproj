@@ -50,6 +50,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Applications.cs" />
     <Compile Include="ChinoAPI.cs" />
     <Compile Include="ChinoApiException.cs" />
     <Compile Include="Auth.cs" />
