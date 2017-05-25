@@ -5,3 +5,5 @@ To get started with CHINO.io .NET, we recommend you add it to your project using
 To install `Chino.dll`, run the following command in the Package Manager Console:
 
 ```PM> Install-Package Chino.dll```
+
+NOTE: Currently does not work with a `Universal Windows Application`
