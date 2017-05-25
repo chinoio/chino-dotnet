@@ -1,0 +1,8 @@
+C:\Users\Paolo\Desktop\dotnet\chino-dotnet\Chino\bin\Release\Chino.dll
+C:\Users\Paolo\Desktop\dotnet\chino-dotnet\Chino\bin\Release\Chino.pdb
+C:\Users\Paolo\Desktop\dotnet\chino-dotnet\Chino\bin\Release\Newtonsoft.Json.dll
+C:\Users\Paolo\Desktop\dotnet\chino-dotnet\Chino\bin\Release\RestSharp.dll
+C:\Users\Paolo\Desktop\dotnet\chino-dotnet\Chino\bin\Release\Newtonsoft.Json.xml
+C:\Users\Paolo\Desktop\dotnet\chino-dotnet\Chino\bin\Release\RestSharp.xml
+C:\Users\Paolo\Desktop\dotnet\chino-dotnet\Chino\obj\Release\Chino.dll
+C:\Users\Paolo\Desktop\dotnet\chino-dotnet\Chino\obj\Release\Chino.pdb

@@ -1,0 +1,28 @@
+<?xml version="1.0"?>
+<package >
+  <metadata>
+    <id>Chino.dll</id>
+    <version>1.0.1</version>
+    <authors>Chino.io</authors>
+    <owners>Chino.io</owners>
+    <projectUrl>https://github.com/chinoio/chino-dotnet</projectUrl>
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <description>Official .NET wrapper for CHINO.io API</description>
+    <releaseNotes>First release</releaseNotes>
+    <copyright>Copyright 2017</copyright>
+    <tags>Chino.io Api</tags>
+    <dependencies>
+       <group targetFramework="net40">
+        <dependency id="Newtonsoft.Json" version="8.0.2" />
+        <dependency id="RestSharp" version="105.2.3" />
+      </group>
+    </dependencies>
+  </metadata>
+  <files>
+    <file src="bin/Release/Chino.dll" target="lib/Chino.dll" />
+    <file src="bin/Release/Newtonsoft.Json.dll" target="lib/Newtonsoft.Json.dll" />
+    <file src="bin/Release/Newtonsoft.Json.xml" target="lib/Newtonsoft.Json.xml" />
+    <file src="bin/Release/RestSharp.dll" target="lib/RestSharp.dll" />
+    <file src="bin/Release/RestSharp.xml" target="lib/RestSharp.xml" />
+  </files>
+</package>
