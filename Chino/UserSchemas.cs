@@ -21,6 +21,10 @@ namespace Chino
         {
             RestRequest request = new RestRequest("/user_schemas?offset=" + offset, Method.GET);
             IRestResponse response = client.Execute(request);
+            if (response.ErrorException != null)
+            {
+                throw new ChinoApiException(response.ErrorMessage);
+            }
             JObject o = JObject.Parse(response.Content.ToString());
             if ((int)o["result_code"] == 200)
             {
@@ -36,6 +40,10 @@ namespace Chino
         {
             RestRequest request = new RestRequest("/user_schemas/" + userSchemaId, Method.GET);
             IRestResponse response = client.Execute(request);
+            if (response.ErrorException != null)
+            {
+                throw new ChinoApiException(response.ErrorMessage);
+            }
             JObject o = JObject.Parse(response.Content.ToString());
             if ((int)o["result_code"] == 200)
             {
@@ -54,6 +62,10 @@ namespace Chino
             RestRequest request = new RestRequest("/user_schemas", Method.POST);
             request.AddJsonBody(userSchemaRequest);
             IRestResponse response = client.Execute(request);
+            if (response.ErrorException != null)
+            {
+                throw new ChinoApiException(response.ErrorMessage);
+            }
             JObject o = JObject.Parse(response.Content.ToString());
             if ((int)o["result_code"] == 200)
             {
@@ -74,6 +86,10 @@ namespace Chino
             userSchemaRequest.structure = userSchemaStructure;
             request.AddJsonBody(userSchemaRequest);
             IRestResponse response = client.Execute(request);
+            if (response.ErrorException != null)
+            {
+                throw new ChinoApiException(response.ErrorMessage);
+            }
             JObject o = JObject.Parse(response.Content.ToString());
             if ((int)o["result_code"] == 200)
             {
@@ -103,6 +119,10 @@ namespace Chino
             userSchemaRequest.structure = userSchemaStructure;
             request.AddJsonBody(userSchemaRequest);
             IRestResponse response = client.Execute(request);
+            if (response.ErrorException != null)
+            {
+                throw new ChinoApiException(response.ErrorMessage);
+            }
             JObject o = JObject.Parse(response.Content.ToString());
             if ((int)o["result_code"] == 200)
             {
@@ -120,6 +140,10 @@ namespace Chino
             RestRequest request = new RestRequest("/user_schemas/"+userSchemaId, Method.PUT);
             request.AddJsonBody(userSchemaRequest);
             IRestResponse response = client.Execute(request);
+            if (response.ErrorException != null)
+            {
+                throw new ChinoApiException(response.ErrorMessage);
+            }
             JObject o = JObject.Parse(response.Content.ToString());
             if ((int)o["result_code"] == 200)
             {
@@ -140,6 +164,10 @@ namespace Chino
             userSchemaRequest.structure = userSchemaStructure;
             request.AddJsonBody(userSchemaRequest);
             IRestResponse response = client.Execute(request);
+            if (response.ErrorException != null)
+            {
+                throw new ChinoApiException(response.ErrorMessage);
+            }
             JObject o = JObject.Parse(response.Content.ToString());
             if ((int)o["result_code"] == 200)
             {
@@ -169,6 +197,10 @@ namespace Chino
             userSchemaRequest.structure = userSchemaStructure;
             request.AddJsonBody(userSchemaRequest);
             IRestResponse response = client.Execute(request);
+            if (response.ErrorException != null)
+            {
+                throw new ChinoApiException(response.ErrorMessage);
+            }
             JObject o = JObject.Parse(response.Content.ToString());
             if ((int)o["result_code"] == 200)
             {
@@ -193,6 +225,10 @@ namespace Chino
                 request = new RestRequest("/user_schemas/" + userSchemaId, Method.DELETE);
             }
             IRestResponse response = client.Execute(request);
+            if (response.ErrorException != null)
+            {
+                throw new ChinoApiException(response.ErrorMessage);
+            }
             JObject o = JObject.Parse(response.Content.ToString());
             return (String)o["result"];
         }

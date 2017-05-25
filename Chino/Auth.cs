@@ -31,6 +31,10 @@ namespace Chino
             request.AddParameter("username", username);
             request.AddParameter("password", password);
             IRestResponse response = client.Execute(request);
+            if (response.ErrorException != null)
+            {
+                throw new ChinoApiException(response.ErrorMessage);
+            }
             JObject o = JObject.Parse(response.Content.ToString());
             if ((int)o["result_code"] == 200)
             {
@@ -46,6 +50,10 @@ namespace Chino
         {
             RestRequest request = new RestRequest("/users/me", Method.GET);
             IRestResponse response = client.Execute(request);
+            if (response.ErrorException != null)
+            {
+                throw new ChinoApiException(response.ErrorMessage);
+            }
             JObject o = JObject.Parse(response.Content.ToString());
             if ((int)o["result_code"] == 200)
             {
@@ -65,6 +73,10 @@ namespace Chino
             request.AddParameter("client_id", appId);
             request.AddParameter("client_secret", appSecret);
             IRestResponse response = client.Execute(request);
+            if (response.ErrorException != null)
+            {
+                throw new ChinoApiException(response.ErrorMessage);
+            }
             JObject o = JObject.Parse(response.Content.ToString());
             if ((int)o["result_code"] == 200)
             {

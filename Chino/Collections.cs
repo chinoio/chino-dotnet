@@ -21,6 +21,10 @@ namespace Chino
         {
             RestRequest request = new RestRequest("/collections?offset=" + offset, Method.GET);
             IRestResponse response = client.Execute(request);
+            if (response.ErrorException != null)
+            {
+                throw new ChinoApiException(response.ErrorMessage);
+            }
             JObject o = JObject.Parse(response.Content.ToString());
             if ((int)o["result_code"] == 200)
             {
@@ -36,6 +40,10 @@ namespace Chino
         {
             RestRequest request = new RestRequest("/collections/" + collectionId, Method.GET);
             IRestResponse response = client.Execute(request);
+            if (response.ErrorException != null)
+            {
+                throw new ChinoApiException(response.ErrorMessage);
+            }
             JObject o = JObject.Parse(response.Content.ToString());
             if ((int)o["result_code"] == 200)
             {
@@ -55,6 +63,10 @@ namespace Chino
             collectionRequest.name = name;
             request.AddJsonBody(collectionRequest);
             IRestResponse response = client.Execute(request);
+            if (response.ErrorException != null)
+            {
+                throw new ChinoApiException(response.ErrorMessage);
+            }
             JObject o = JObject.Parse(response.Content.ToString());
             if ((int)o["result_code"] == 200)
             {
@@ -74,6 +86,10 @@ namespace Chino
             collectionRequest.name = name;
             request.AddJsonBody(collectionRequest);
             IRestResponse response = client.Execute(request);
+            if (response.ErrorException != null)
+            {
+                throw new ChinoApiException(response.ErrorMessage);
+            }
             JObject o = JObject.Parse(response.Content.ToString());
             if ((int)o["result_code"] == 200)
             {
@@ -98,6 +114,10 @@ namespace Chino
                 request = new RestRequest("/collections/" + collectionId, Method.DELETE);
             }
             IRestResponse response = client.Execute(request);
+            if (response.ErrorException != null)
+            {
+                throw new ChinoApiException(response.ErrorMessage);
+            }
             JObject o = JObject.Parse(response.Content.ToString());
             return (String)o["result"];
         }
@@ -106,6 +126,10 @@ namespace Chino
         {
             RestRequest request = new RestRequest("/collections/" + collectionId + "/documents?offset=" + offset, Method.GET);
             IRestResponse response = client.Execute(request);
+            if (response.ErrorException != null)
+            {
+                throw new ChinoApiException(response.ErrorMessage);
+            }
             JObject o = JObject.Parse(response.Content.ToString());
             if ((int)o["result_code"] == 200)
             {
@@ -121,6 +145,10 @@ namespace Chino
         {
             RestRequest request = new RestRequest("/collections/" + collectionId + "/documents/"+documentId, Method.POST);
             IRestResponse response = client.Execute(request);
+            if (response.ErrorException != null)
+            {
+                throw new ChinoApiException(response.ErrorMessage);
+            }
             JObject o = JObject.Parse(response.Content.ToString());
             return (String)o["result"];
         }
@@ -129,6 +157,10 @@ namespace Chino
         {
             RestRequest request = new RestRequest("/collections/" + collectionId + "/documents/" + documentId, Method.DELETE);
             IRestResponse response = client.Execute(request);
+            if (response.ErrorException != null)
+            {
+                throw new ChinoApiException(response.ErrorMessage);
+            }
             JObject o = JObject.Parse(response.Content.ToString());
             return (String)o["result"];
         }

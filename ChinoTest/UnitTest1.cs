@@ -28,8 +28,8 @@ namespace ChinoTest
         String COLLECTION_ID = "";
         String REPOSITORY_ID = "";
         String GROUP_ID = "";
-        String customerId = "{your_customer_id}";
-        String customerKey = "{your_customer_key}";
+        String customerId = "<your-customer-id>";
+        String customerKey = "<your-customer-key>";
         String hostUrl = "https://api.test.chino.io/v1";
 
         [TestMethod]
@@ -324,6 +324,7 @@ namespace ChinoTest
         public void TestSearch()
         {
             ChinoAPI chino = new ChinoAPI(hostUrl, customerId, customerKey);
+            deleteAll(chino);
             Repository repo = chino.repositories.create("test_repo_description");
             REPOSITORY_ID = repo.repository_id;
             SchemaRequest schemaRequest = new SchemaRequest();
@@ -340,7 +341,23 @@ namespace ChinoTest
             Schema schema = chino.schemas.create(REPOSITORY_ID, schemaRequest);
             SCHEMA_ID_1 = schema.schema_id;
 
-            Thread.Sleep(3000);
+            List<UserSchemaField> userSchemaFields = new List<UserSchemaField>();
+            userSchemaFields.Add(new UserSchemaField("name", "string", true));
+            userSchemaFields.Add(new UserSchemaField("last_name", "string", true));
+            UserSchemaStructure userSchemaStructure = new UserSchemaStructure();
+            userSchemaStructure.fields = userSchemaFields;
+            UserSchemaRequest userSchemaRequest = new UserSchemaRequest();
+            userSchemaRequest.structure = userSchemaStructure;
+            userSchemaRequest.description = "user_schema";
+            UserSchema userSchema = chino.userSchemas.create(userSchemaRequest);
+
+            Dictionary<String, Object> attributes = new Dictionary<string, object>();
+            attributes.Add("name", "Giacobino");
+            attributes.Add("last_name", "Poretti");
+
+            chino.users.create("jack@gmail.com", "password", attributes, userSchema.user_schema_id);
+
+            Thread.Sleep(8000);
 
             Dictionary<String, Object> content = new Dictionary<string, object>();
             content.Add("test_integer", 123);
@@ -356,9 +373,12 @@ namespace ChinoTest
             content.Add("test_boolean", false);
             content.Add("test_date", "1997-12-04");
             chino.documents.create(content, SCHEMA_ID_1);
+
+            Thread.Sleep(3000);
+
             Console.WriteLine(document.ToStringExtension());
             SearchRequest searchRequest = new SearchRequest();
-            searchRequest.result_type = "FULL_CONTENT";
+            searchRequest.result_type = "ONLY_ID";
             searchRequest.filter_type = "and";
             List<SortOption> sort = new List<SortOption>();
             sort.Add(new SortOption("test_string", "asc"));
@@ -366,12 +386,17 @@ namespace ChinoTest
             List<FilterOption> filter = new List<FilterOption>();
             filter.Add(new FilterOption("test_integer", "gt", 123));
             searchRequest.filter = filter;
+            Console.WriteLine("ONLY_ID");
             Console.WriteLine(chino.search.searchDocuments(SCHEMA_ID_1, searchRequest).ToStringExtension());
             filter.Add(new FilterOption("test_boolean", "eq", true));
             Console.WriteLine(chino.search.searchDocuments(SCHEMA_ID_1, "FULL_CONTENT", true, "or", sort, filter).ToStringExtension());
-            GetDocumentsResponse documents = chino.search.where("test_integer").gt(123).and("test_date").eq("1997-12-04").sortAscBy("test_string").search(SCHEMA_ID_1);
+            GetDocumentsResponse documents = chino.search.where("test_integer").gt(123).and("test_date").eq("1997-12-04").sortAscBy("test_string").searchDocuments(SCHEMA_ID_1);
             Console.WriteLine("Test search method with functions:");
             Console.WriteLine(documents.ToStringExtension());
+            GetUsersResponse users = chino.search.where("name").eq("Giacobino").sortAscBy("name").resultType("EXISTS").searchUsers(userSchema.user_schema_id);
+            Console.WriteLine(users.ToStringExtension());
+            users = chino.search.where("username").eq("jack@gmail.com").sortAscBy("name").resultType("USERNAME_EXISTS").searchUsers(userSchema.user_schema_id);
+            Console.WriteLine(users.ToStringExtension());
         }
 
         [TestMethod]

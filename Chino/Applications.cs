@@ -22,6 +22,10 @@ namespace Chino
         {
             RestRequest request = new RestRequest("/auth/applications?offset=" + offset, Method.GET);
             IRestResponse response = client.Execute(request);
+            if (response.ErrorException != null)
+            {
+                throw new ChinoApiException(response.ErrorMessage);
+            }
             String content = response.Content.ToString();
             JObject o = JObject.Parse(content);
             if ((int)o["result_code"] == 200)
@@ -38,6 +42,10 @@ namespace Chino
         {
             RestRequest request = new RestRequest("/auth/applications/" + applicationId, Method.GET);
             IRestResponse response = client.Execute(request);
+            if (response.ErrorException != null)
+            {
+                throw new ChinoApiException(response.ErrorMessage);
+            }
             String content = response.Content.ToString();
             JObject o = JObject.Parse(content);
             if ((int)o["result_code"] == 200)
@@ -61,6 +69,10 @@ namespace Chino
             applicationRequest.redirect_url = redirect_url;
             request.AddJsonBody(applicationRequest);
             IRestResponse response = client.Execute(request);
+            if (response.ErrorException != null)
+            {
+                throw new ChinoApiException(response.ErrorMessage);
+            }
             String content = response.Content.ToString();
             JObject o = JObject.Parse(content);
             if ((int)o["result_code"] == 200)
@@ -83,6 +95,10 @@ namespace Chino
             applicationRequest.redirect_url = redirect_url;
             request.AddJsonBody(applicationRequest);
             IRestResponse response = client.Execute(request);
+            if (response.ErrorException != null)
+            {
+                throw new ChinoApiException(response.ErrorMessage);
+            }
             String content = response.Content.ToString();
             JObject o = JObject.Parse(content);
             if ((int)o["result_code"] == 200)
@@ -108,6 +124,10 @@ namespace Chino
                 request = new RestRequest("/auth/applications/" + applicationId, Method.DELETE);
             }
             IRestResponse response = client.Execute(request);
+            if (response.ErrorException != null)
+            {
+                throw new ChinoApiException(response.ErrorMessage);
+            }
             String content = response.Content.ToString();
             JObject o = JObject.Parse(content);
             return (String)o["result"];

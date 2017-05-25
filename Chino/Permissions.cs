@@ -21,6 +21,10 @@ namespace Chino
         {
             RestRequest request = new RestRequest("/perms?offset=" + offset, Method.GET);
             IRestResponse response = client.Execute(request);
+            if (response.ErrorException != null)
+            {
+                throw new ChinoApiException(response.ErrorMessage);
+            }
             JObject o = JObject.Parse(response.Content.ToString());
             if ((int)o["result_code"] == 200)
             {
@@ -36,6 +40,10 @@ namespace Chino
         {
             RestRequest request = new RestRequest("/perms/documents/"+documentId+"?offset=" + offset, Method.GET);
             IRestResponse response = client.Execute(request);
+            if (response.ErrorException != null)
+            {
+                throw new ChinoApiException(response.ErrorMessage);
+            }
             JObject o = JObject.Parse(response.Content.ToString());
             if ((int)o["result_code"] == 200)
             {
@@ -51,6 +59,10 @@ namespace Chino
         {
             RestRequest request = new RestRequest("/perms/users/" + userId + "?offset=" + offset, Method.GET);
             IRestResponse response = client.Execute(request);
+            if (response.ErrorException != null)
+            {
+                throw new ChinoApiException(response.ErrorMessage);
+            }
             JObject o = JObject.Parse(response.Content.ToString());
             if ((int)o["result_code"] == 200)
             {
@@ -66,6 +78,10 @@ namespace Chino
         {
             RestRequest request = new RestRequest("/perms/groups/" + groupId + "?offset=" + offset, Method.GET);
             IRestResponse response = client.Execute(request);
+            if (response.ErrorException != null)
+            {
+                throw new ChinoApiException(response.ErrorMessage);
+            }
             JObject o = JObject.Parse(response.Content.ToString());
             if ((int)o["result_code"] == 200)
             {
@@ -82,6 +98,10 @@ namespace Chino
             RestRequest request = new RestRequest("/perms/" + action + "/" + resourceType + "/" + subjectType + "/" + subjectId, Method.POST);
             request.AddJsonBody(permissionRule);
             IRestResponse response = client.Execute(request);
+            if (response.ErrorException != null)
+            {
+                throw new ChinoApiException(response.ErrorMessage);
+            }
             JObject o = JObject.Parse(response.Content.ToString());
             return (String)o["result"];
         }
@@ -91,6 +111,10 @@ namespace Chino
             RestRequest request = new RestRequest("/perms/" + action + "/" + resourceType + "/" + resourceId + "/" + subjectType + "/" + subjectId, Method.POST);
             request.AddJsonBody(permissionRule);
             IRestResponse response = client.Execute(request);
+            if (response.ErrorException != null)
+            {
+                throw new ChinoApiException(response.ErrorMessage);
+            }
             JObject o = JObject.Parse(response.Content.ToString());
             return (String)o["result"];
         }
@@ -100,6 +124,10 @@ namespace Chino
             RestRequest request = new RestRequest("/perms/" + action + "/" + resourceType + "/" + resourceId + "/" + resourceChildren + "/" + subjectType + "/" + subjectId, Method.POST);
             request.AddJsonBody(permissionRule);
             IRestResponse response = client.Execute(request);
+            if (response.ErrorException != null)
+            {
+                throw new ChinoApiException(response.ErrorMessage);
+            }
             JObject o = JObject.Parse(response.Content.ToString());
             return (String)o["result"];
         }
@@ -109,6 +137,10 @@ namespace Chino
             RestRequest request = new RestRequest("/perms/" + action + "/" + resourceType + "/" + resourceId + "/" + resourceChildren + "/" + subjectType + "/" + subjectId, Method.POST);
             request.AddJsonBody(permissionRule);
             IRestResponse response = client.Execute(request);
+            if (response.ErrorException != null)
+            {
+                throw new ChinoApiException(response.ErrorMessage);
+            }
             JObject o = JObject.Parse(response.Content.ToString());
             return (String)o["result"];
         }

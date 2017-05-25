@@ -26,6 +26,7 @@ namespace Chino
             FileStream file = new FileStream(path + Path.DirectorySeparatorChar + fileName, FileMode.Open);
             Byte[] bytes;
             int currentFilePosition = 0;
+
             file.Seek(currentFilePosition, SeekOrigin.Begin);
             while (currentFilePosition < file.Length)
             {
@@ -33,12 +34,12 @@ namespace Chino
                 if (distanceFromEnd > chunkSize)
                 {
                     bytes = new Byte[chunkSize];
-                    file.Read(bytes, currentFilePosition, chunkSize);
+                    file.Read(bytes, 0, chunkSize);
                 }
                 else
                 {
                     bytes = new Byte[distanceFromEnd];
-                    file.Read(bytes, currentFilePosition, distanceFromEnd);
+                    file.Read(bytes, 0, distanceFromEnd);
                 }
                 uploadChunk(blobResponse.blob.upload_id, bytes, currentFilePosition, bytes.Length);
                 currentFilePosition = currentFilePosition + bytes.Length;
@@ -55,6 +56,10 @@ namespace Chino
             commitBlobUploadRequest.upload_id = uploadId;
             request.AddJsonBody(commitBlobUploadRequest);
             IRestResponse response = client.Execute(request);
+            if (response.ErrorException != null)
+            {
+                throw new ChinoApiException(response.ErrorMessage);
+            }
             JObject o = JObject.Parse(response.Content.ToString());
             if ((int)o["result_code"] == 200)
             {
@@ -74,6 +79,10 @@ namespace Chino
             request.AddHeader("offset", offset.ToString());
             request.AddHeader("length", length.ToString());
             IRestResponse response = client.Execute(request);
+            if (response.ErrorException != null)
+            {
+                throw new ChinoApiException(response.ErrorMessage);
+            }
             JObject o = JObject.Parse(response.Content.ToString());
             if ((int)o["result_code"] == 200)
             {
@@ -94,6 +103,10 @@ namespace Chino
             createBlobUploadRequest.file_name = fileName;
             request.AddJsonBody(createBlobUploadRequest);
             IRestResponse response = client.Execute(request);
+            if (response.ErrorException != null)
+            {
+                throw new ChinoApiException(response.ErrorMessage);
+            }
             JObject o = JObject.Parse(response.Content.ToString());
             if ((int)o["result_code"] == 200)
             {
@@ -110,6 +123,10 @@ namespace Chino
             GetBlobResponse blobResponse = new GetBlobResponse();
             RestRequest request = new RestRequest("/blobs/"+blobId, Method.GET);
             IRestResponse response = client.Execute(request);
+            if (response.ErrorException != null)
+            {
+                throw new ChinoApiException(response.ErrorMessage);
+            }
             foreach (Parameter p in response.Headers)
             {
                 if (p.Name == "Content-Disposition")
@@ -143,6 +160,10 @@ namespace Chino
                 request = new RestRequest("/users/" + blobId, Method.DELETE);
             }
             IRestResponse response = client.Execute(request);
+            if (response.ErrorException != null)
+            {
+                throw new ChinoApiException(response.ErrorMessage);
+            }
             JObject o = JObject.Parse(response.Content.ToString());
             return (String)o["result"];
         }

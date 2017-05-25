@@ -21,6 +21,10 @@ namespace Chino
         {
             RestRequest request = new RestRequest("/schemas/" + schemaId + "/documents?offset=" + offset, Method.GET);
             IRestResponse response = client.Execute(request);
+            if (response.ErrorException != null)
+            {
+                throw new ChinoApiException(response.ErrorMessage);
+            }
             JObject o = JObject.Parse(response.Content.ToString());
             if ((int)o["result_code"] == 200)
             {
@@ -36,6 +40,10 @@ namespace Chino
         {
             RestRequest request = new RestRequest("/schemas/" + schemaId + "/documents?full_document=true&offset=" + offset, Method.GET);
             IRestResponse response = client.Execute(request);
+            if (response.ErrorException != null)
+            {
+                throw new ChinoApiException(response.ErrorMessage);
+            }
             JObject o = JObject.Parse(response.Content.ToString());
             if ((int)o["result_code"] == 200)
             {
@@ -51,6 +59,10 @@ namespace Chino
         {
             RestRequest request = new RestRequest("/documents/" + documentId, Method.GET);
             IRestResponse response = client.Execute(request);
+            if (response.ErrorException != null)
+            {
+                throw new ChinoApiException(response.ErrorMessage);
+            }
             JObject o = JObject.Parse(response.Content.ToString());
             if ((int)o["result_code"] == 200)
             {
@@ -70,6 +82,10 @@ namespace Chino
             documentRequest.content = content;
             request.AddJsonBody(documentRequest);
             IRestResponse response = client.Execute(request);
+            if (response.ErrorException != null)
+            {
+                throw new ChinoApiException(response.ErrorMessage);
+            }
             JObject o = JObject.Parse(response.Content.ToString());
             if ((int)o["result_code"] == 200)
             {
@@ -89,6 +105,10 @@ namespace Chino
             documentRequest.content = content;
             request.AddJsonBody(documentRequest);
             IRestResponse response = client.Execute(request);
+            if (response.ErrorException != null)
+            {
+                throw new ChinoApiException(response.ErrorMessage);
+            }
             JObject o = JObject.Parse(response.Content.ToString());
             if ((int)o["result_code"] == 200)
             {
@@ -113,6 +133,10 @@ namespace Chino
                 request = new RestRequest("/documents/" + documentId, Method.DELETE);
             }
             IRestResponse response = client.Execute(request);
+            if (response.ErrorException != null)
+            {
+                throw new ChinoApiException(response.ErrorMessage);
+            }
             JObject o = JObject.Parse(response.Content.ToString());
             return (String)o["result"];
         }
@@ -155,6 +179,8 @@ namespace Chino
         public int offset { get; set; }
         [JsonProperty(PropertyName = "documents")]
         public List<Document> documents { get; set; }
+        [JsonProperty(PropertyName = "IDs")]
+        public List<String> ids { get; set; }
     }
 
     public class CreateDocumentRequest

@@ -21,6 +21,10 @@ namespace Chino
         {
             RestRequest request = new RestRequest("/groups?offset=" + offset, Method.GET);
             IRestResponse response = client.Execute(request);
+            if (response.ErrorException != null)
+            {
+                throw new ChinoApiException(response.ErrorMessage);
+            }
             JObject o = JObject.Parse(response.Content.ToString());
             if ((int)o["result_code"] == 200)
             {
@@ -36,6 +40,10 @@ namespace Chino
         {
             RestRequest request = new RestRequest("/groups/" + groupId, Method.GET);
             IRestResponse response = client.Execute(request);
+            if (response.ErrorException != null)
+            {
+                throw new ChinoApiException(response.ErrorMessage);
+            }
             JObject o = JObject.Parse(response.Content.ToString());
             if ((int)o["result_code"] == 200)
             {
@@ -56,6 +64,10 @@ namespace Chino
             groupRequest.attributes = attributes;
             request.AddJsonBody(groupRequest);
             IRestResponse response = client.Execute(request);
+            if (response.ErrorException != null)
+            {
+                throw new ChinoApiException(response.ErrorMessage);
+            }
             JObject o = JObject.Parse(response.Content.ToString());
             if ((int)o["result_code"] == 200)
             {
@@ -76,6 +88,10 @@ namespace Chino
             groupRequest.attributes = attributes;
             request.AddJsonBody(groupRequest);
             IRestResponse response = client.Execute(request);
+            if (response.ErrorException != null)
+            {
+                throw new ChinoApiException(response.ErrorMessage);
+            }
             JObject o = JObject.Parse(response.Content.ToString());
             if ((int)o["result_code"] == 200)
             {
@@ -92,6 +108,10 @@ namespace Chino
         {
             RestRequest request = new RestRequest("/groups/" + groupId + "/users/" + userId, Method.POST);
             IRestResponse response = client.Execute(request);
+            if (response.ErrorException != null)
+            {
+                throw new ChinoApiException(response.ErrorMessage);
+            }
             JObject o = JObject.Parse(response.Content.ToString());
             return (String)o["result"];
         }
@@ -100,6 +120,10 @@ namespace Chino
         {
             RestRequest request = new RestRequest("/groups/" + groupId + "/users/" + userId, Method.DELETE);
             IRestResponse response = client.Execute(request);
+            if (response.ErrorException != null)
+            {
+                throw new ChinoApiException(response.ErrorMessage);
+            }
             JObject o = JObject.Parse(response.Content.ToString());
             return (String)o["result"];
         }
@@ -108,6 +132,10 @@ namespace Chino
         {
             RestRequest request = new RestRequest("/groups/" + groupId + "/user_schemas/" + userSchemaId, Method.POST);
             IRestResponse response = client.Execute(request);
+            if (response.ErrorException != null)
+            {
+                throw new ChinoApiException(response.ErrorMessage);
+            }
             JObject o = JObject.Parse(response.Content.ToString());
             return (String)o["result"];
         }
@@ -116,6 +144,10 @@ namespace Chino
         {
             RestRequest request = new RestRequest("/groups/" + groupId + "/user_schemas/" + userSchemaId, Method.DELETE);
             IRestResponse response = client.Execute(request);
+            if (response.ErrorException != null)
+            {
+                throw new ChinoApiException(response.ErrorMessage);
+            }
             JObject o = JObject.Parse(response.Content.ToString());
             return (String)o["result"];
         }
@@ -132,6 +164,10 @@ namespace Chino
                 request = new RestRequest("/groups/" + groupId, Method.DELETE);
             }
             IRestResponse response = client.Execute(request);
+            if (response.ErrorException != null)
+            {
+                throw new ChinoApiException(response.ErrorMessage);
+            }
             JObject o = JObject.Parse(response.Content.ToString());
             return (String)o["result"];
         }

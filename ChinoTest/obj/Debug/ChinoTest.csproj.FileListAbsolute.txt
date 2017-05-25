@@ -10,3 +10,15 @@ c:\Users\Paolo\documents\visual studio 2013\Projects\Chino\ChinoTest\obj\Debug\C
 c:\Users\Paolo\documents\visual studio 2013\Projects\Chino\ChinoTest\bin\Debug\Newtonsoft.Json.dll
 c:\Users\Paolo\documents\visual studio 2013\Projects\Chino\ChinoTest\bin\Debug\Newtonsoft.Json.xml
 C:\Users\Paolo\Documents\Visual Studio 2013\Projects\Chino\ChinoTest\bin\Debug\Microsoft.VisualStudio.QualityTools.UnitTestFramework.dll
+C:\Users\Paolo\Desktop\dotnet\chino-dotnet\ChinoTest\bin\Debug\ChinoTest.dll
+C:\Users\Paolo\Desktop\dotnet\chino-dotnet\ChinoTest\bin\Debug\ChinoTest.pdb
+C:\Users\Paolo\Desktop\dotnet\chino-dotnet\ChinoTest\bin\Debug\Chino.dll
+C:\Users\Paolo\Desktop\dotnet\chino-dotnet\ChinoTest\bin\Debug\Microsoft.VisualStudio.QualityTools.UnitTestFramework.dll
+C:\Users\Paolo\Desktop\dotnet\chino-dotnet\ChinoTest\bin\Debug\Newtonsoft.Json.dll
+C:\Users\Paolo\Desktop\dotnet\chino-dotnet\ChinoTest\bin\Debug\RestSharp.dll
+C:\Users\Paolo\Desktop\dotnet\chino-dotnet\ChinoTest\bin\Debug\Chino.pdb
+C:\Users\Paolo\Desktop\dotnet\chino-dotnet\ChinoTest\bin\Debug\Newtonsoft.Json.xml
+C:\Users\Paolo\Desktop\dotnet\chino-dotnet\ChinoTest\bin\Debug\RestSharp.xml
+C:\Users\Paolo\Desktop\dotnet\chino-dotnet\ChinoTest\obj\Debug\ChinoTest.csprojResolveAssemblyReference.cache
+C:\Users\Paolo\Desktop\dotnet\chino-dotnet\ChinoTest\obj\Debug\ChinoTest.dll
+C:\Users\Paolo\Desktop\dotnet\chino-dotnet\ChinoTest\obj\Debug\ChinoTest.pdb

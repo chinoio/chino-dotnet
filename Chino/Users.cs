@@ -21,6 +21,10 @@ namespace Chino
         {
             RestRequest request = new RestRequest("/user_schemas/" + userSchemaId + "/users?offset=" + offset, Method.GET);
             IRestResponse response = client.Execute(request);
+            if (response.ErrorException != null)
+            {
+                throw new ChinoApiException(response.ErrorMessage);
+            }
             JObject o = JObject.Parse(response.Content.ToString());
             if ((int)o["result_code"] == 200)
             {
@@ -36,6 +40,10 @@ namespace Chino
         {
             RestRequest request = new RestRequest("/users/" + userId, Method.GET);
             IRestResponse response = client.Execute(request);
+            if (response.ErrorException != null)
+            {
+                throw new ChinoApiException(response.ErrorMessage);
+            }
             JObject o = JObject.Parse(response.Content.ToString());
             if ((int)o["result_code"] == 200)
             {
@@ -58,6 +66,10 @@ namespace Chino
             userRequest.attributes = attributes;
             request.AddJsonBody(userRequest);
             IRestResponse response = client.Execute(request);
+            if (response.ErrorException != null)
+            {
+                throw new ChinoApiException(response.ErrorMessage);
+            }
             JObject o = JObject.Parse(response.Content.ToString());
             if ((int)o["result_code"] == 200)
             {
@@ -79,6 +91,10 @@ namespace Chino
             userRequest.attributes = attributes;
             request.AddJsonBody(userRequest);
             IRestResponse response = client.Execute(request);
+            if (response.ErrorException != null)
+            {
+                throw new ChinoApiException(response.ErrorMessage);
+            }
             JObject o = JObject.Parse(response.Content.ToString());
             if ((int)o["result_code"] == 200)
             {
@@ -98,6 +114,10 @@ namespace Chino
             userRequest.attributes = attributes;
             request.AddJsonBody(userRequest);
             IRestResponse response = client.Execute(request);
+            if (response.ErrorException != null)
+            {
+                throw new ChinoApiException(response.ErrorMessage);
+            }
             JObject o = JObject.Parse(response.Content.ToString());
             if ((int)o["result_code"] == 200)
             {
@@ -122,6 +142,10 @@ namespace Chino
                 request = new RestRequest("/users/" + userId, Method.DELETE);
             }
             IRestResponse response = client.Execute(request);
+            if (response.ErrorException != null)
+            {
+                throw new ChinoApiException(response.ErrorMessage);
+            }
             JObject o = JObject.Parse(response.Content.ToString());
             return (String)o["result"];
         }
@@ -166,6 +190,8 @@ namespace Chino
         public int offset { get; set; }
         [JsonProperty(PropertyName = "users")]
         public List<User> users { get; set; }
+        [JsonProperty(PropertyName = "exists")]
+        public bool exists { get; set; }
     }
 
     public class CreateUserRequest

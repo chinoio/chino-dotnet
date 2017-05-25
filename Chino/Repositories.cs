@@ -23,6 +23,10 @@ namespace Chino {
         {
             RestRequest request = new RestRequest("/repositories?offset="+offset, Method.GET);
             IRestResponse response = client.Execute(request);
+            if (response.ErrorException != null)
+            {
+                throw new ChinoApiException(response.ErrorMessage);
+            }
             String content = response.Content.ToString();
             JObject o = JObject.Parse(content);
             if ((int)o["result_code"] == 200)
@@ -38,6 +42,10 @@ namespace Chino {
         public Repository read(string repositoryId) {
             RestRequest request = new RestRequest("/repositories/" + repositoryId, Method.GET);
             IRestResponse response = client.Execute(request);
+            if (response.ErrorException != null)
+            {
+                throw new ChinoApiException(response.ErrorMessage);
+            }
             String content = response.Content.ToString();
             JObject o = JObject.Parse(content);
             if ((int)o["result_code"] == 200)
@@ -58,6 +66,10 @@ namespace Chino {
             repositoryRequest.description = description;
             request.AddJsonBody(repositoryRequest);
             IRestResponse response = client.Execute(request);
+            if (response.ErrorException != null)
+            {
+                throw new ChinoApiException(response.ErrorMessage);
+            }
             String content = response.Content.ToString();
             JObject o = JObject.Parse(content);
             if ((int)o["result_code"] == 200)
@@ -77,6 +89,10 @@ namespace Chino {
             repositoryRequest.description = description;
             request.AddJsonBody(repositoryRequest);
             IRestResponse response = client.Execute(request);
+            if (response.ErrorException != null)
+            {
+                throw new ChinoApiException(response.ErrorMessage);
+            }
             String content = response.Content.ToString();
             JObject o = JObject.Parse(content);
             if ((int)o["result_code"] == 200) {
@@ -95,6 +111,10 @@ namespace Chino {
               request = new RestRequest("/repositories/" + repositoryId, Method.DELETE);
             }
             IRestResponse response = client.Execute(request);
+            if (response.ErrorException != null)
+            {
+                throw new ChinoApiException(response.ErrorMessage);
+            }
             String content = response.Content.ToString();
             JObject o = JObject.Parse(content);
             return (String)o["result"];
