@@ -49,6 +49,7 @@
     <Reference Include="System.Data" />
     <Reference Include="System.Xml" />
   </ItemGroup>
+  <!--Chino.io SDK modules-->
   <ItemGroup>
     <Compile Include="Applications.cs" />
     <Compile Include="ChinoAPI.cs" />
