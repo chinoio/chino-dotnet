@@ -1,9 +1,23 @@
-## Setup
+# chino-dotnet
 
-To get started with CHINO.io .NET, we recommend you add it to your project using NuGet.
+A C# SDK for [Chino.io](https://chino.io) API on the .NET framework
 
-To install `Chino.dll`, run the following command in the Package Manager Console:
+## Contacts
+
+Maintainer: @aarighi <andrea@chino.io>
+Developer: @prempaolo <prempaolo@gmail.com>
+
+## Requirments
+
+Install requirements using NuGet. To install `Chino.dll`, run the following command in the Package Manager Console:
 
 ```PM> Install-Package Chino.dll```
 
-NOTE: Currently does not work with a `Universal Windows Application`
+### NOTE
+
+The SDK can not be used in a `Universal Windows Application`.
+
+## Test
+
+Tests can be run using `ChinoTest\UnitTest1.cs`. Only setup required is setting the values of `customerId`, 
+`customerKey` and `hostUrl`.
