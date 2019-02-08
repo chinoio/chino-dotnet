@@ -1,11 +1,18 @@
 # chino-dotnet
 
-A C# SDK for [Chino.io](https://chino.io) API on the .NET framework
+A C# SDK for using [Chino.io API](https://chino.io) with the .NET framework.
+
+*Read the full docs at https://docs.chino.io*
+
+[See changelog](./CHANGELOG.md)
 
 ## Contacts
 
-Maintainer: @aarighi <andrea@chino.io>
-Developer: @prempaolo <prempaolo@gmail.com>
+Issues / help / feedback: <tech-support@chino.io>
+
+Maintainer: [@aarighi](https://github.com/aarighi) <andrea@chino.io>
+
+Developer: [@prempaolo](https://github.com/prempaolo) <prempaolo@gmail.com>
 
 ## Requirments
 
