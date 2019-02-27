@@ -64,6 +64,8 @@ namespace ChinoTest
             {
                 Console.WriteLine(chino.applications.delete(a.app_id, true));
             }
+            
+            
         }
 
         [TestMethod]
@@ -165,11 +167,13 @@ namespace ChinoTest
             }
             UserSchema userSchema = chino.userSchemas.create("user_schema_description_2", typeof(UserSchemaStructureSample));
             USER_SCHEMA_ID_1 = userSchema.user_schema_id;
-            Dictionary<String, Object> attributes = new Dictionary<string,object>();
-            attributes.Add("test_integer", 123);
-            attributes.Add("test_string", "string_value");
-            attributes.Add("test_boolean", true);
-            attributes.Add("test_date", "1997-12-03");
+            Dictionary<String, Object> attributes = new Dictionary<string, object>
+            {
+                {"test_integer", 123},
+                {"test_string", "string_value"},
+                {"test_boolean", true},
+                {"test_date", "1997-12-03"}
+            };
             User user = chino.users.create("Giovanni", "password", attributes, USER_SCHEMA_ID_1);
             Console.WriteLine(user.ToStringExtension());
             USER_ID = user.user_id;

@@ -14,7 +14,7 @@ Maintainer: [@aarighi](https://github.com/aarighi) <andrea@chino.io>
 
 Developer: [@prempaolo](https://github.com/prempaolo) <prempaolo@gmail.com>
 
-## Requirments
+## Requirements
 
 Install requirements using NuGet. To install `Chino.dll`, run the following command in the Package Manager Console:
 
