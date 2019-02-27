@@ -28,9 +28,13 @@ namespace ChinoTest
         String COLLECTION_ID = "";
         String REPOSITORY_ID = "";
         String GROUP_ID = "";
-        String customerId = "<your-customer-id>";
-        String customerKey = "<your-customer-key>";
-        String hostUrl = "https://api.test.chino.io/v1";
+        String customerId = "fd890009-30f7-42ad-97bd-0ce71f7a2859";
+        String customerKey = "108c3d15-200a-42e8-bbe3-7fe48535d89e";
+        String hostUrl = "http://localhost:8000/v1";
+//        readonly String customerId = Environment.GetEnvironmentVariable("customerId") ?? Environment.GetEnvironmentVariable("customer_id") ;
+//        readonly String customerKey = Environment.GetEnvironmentVariable("customerKey") ?? Environment.GetEnvironmentVariable("customer_key") ;
+//        readonly String hostUrl = Environment.GetEnvironmentVariable("host") ?? "https://api.test.chino.io/v1";
+
 
         [TestMethod]
         public void TestRepositories()
@@ -406,14 +410,26 @@ namespace ChinoTest
         [TestMethod]
         public void TestPermissions()
         {
+            // SETUP
             ChinoAPI chino = new ChinoAPI(hostUrl, customerId, customerKey);
             deleteAll(chino);
+            
             Repository repo = chino.repositories.create("test_repo_description");
             REPOSITORY_ID = repo.repository_id;
+            
             Schema schema = chino.schemas.create(REPOSITORY_ID, "schema_description_2", typeof(SchemaStructureSample));
             SCHEMA_ID_1 = schema.schema_id;
+            
             UserSchema userSchema = chino.userSchemas.create("user_schema_description_2", typeof(UserSchemaStructureSample));
             USER_SCHEMA_ID_1 = userSchema.user_schema_id;
+            
+            Application app = chino.applications.create("app_sdk_dotnet", "password", "");
+            
+            // TODO remove
+//            LoggedUser test = chino.auth.loginUserWithPassword("Giovanni", "\"password\"", "hSnQkZyiEv8SbWOtxlLJwC4aEc9rphMycuDiY57t", null);
+
+            // END
+            
             Dictionary<String, Object> attributes = new Dictionary<string, object>();
             attributes.Add("test_integer", 123);
             attributes.Add("test_string", "string_value");
@@ -421,10 +437,13 @@ namespace ChinoTest
             attributes.Add("test_date", "1997-12-03");
             User user = chino.users.create("Giovanni", "password", attributes, USER_SCHEMA_ID_1);
             USER_ID = user.user_id;
+            
+            // TEST perms on a Schema and new Documents
             PermissionRule rule = new PermissionRule();
             rule.setAuthorize(PermissionValues.READ);
             rule.setManage(PermissionValues.READ, PermissionValues.UPDATE, PermissionValues.DELETE);
             Console.WriteLine(chino.permissions.permissionsOnaResource(PermissionValues.GRANT, PermissionValues.REPOSITORIES, REPOSITORY_ID, PermissionValues.USERS, USER_ID, rule));
+            
             PermissionRuleCreatedDocument permissionRuleCreatedDocument = new PermissionRuleCreatedDocument();
             permissionRuleCreatedDocument.setAuthorize("R", "C", "U");
             permissionRuleCreatedDocument.setManage("R", "C", "U", "D");
@@ -433,9 +452,10 @@ namespace ChinoTest
             rule.setManage("R", "U", "D");
             permissionRuleCreatedDocument.created_document = rule;
             Console.WriteLine(chino.permissions.permissionsOnResourceChildren(PermissionValues.GRANT, PermissionValues.SCHEMAS, SCHEMA_ID_1, PermissionValues.DOCUMENTS, PermissionValues.USERS, USER_ID, permissionRuleCreatedDocument));
-            Application app = chino.applications.create("app_sdk_dotnet", "password", "");
+            
             LoggedUser loggedUser = chino.auth.loginUserWithPassword("Giovanni", "password", app.app_id, app.app_secret);
             chino.initClient(hostUrl, loggedUser.access_token);
+            
             Dictionary<String, Object> content = new Dictionary<string, object>();
             content.Add("test_integer", 123);
             content.Add("test_string", "string_value");
@@ -443,7 +463,9 @@ namespace ChinoTest
             content.Add("test_date", "1997-12-03");
             Document document = chino.documents.create(content, SCHEMA_ID_1);
             DOCUMENT_ID = document.document_id;
+            
             chino.auth.checkUserStatus();
+            
             Console.WriteLine("Permissions of the User:");
             GetPermissionsResponse permissionsResponse = chino.permissions.readPermissionsOfaUser(USER_ID, 0);
             Console.WriteLine(permissionsResponse.ToStringExtension());
@@ -460,23 +482,29 @@ namespace ChinoTest
                 //Console.WriteLine("Manage Created Document: " + string.Join(",", manageCreatedDocument.ToArray()));
                 Console.WriteLine("");
             }
+            
             Console.WriteLine("Permissions on the Document:");
             permissionsResponse = chino.permissions.readPermissionsOnaDocument(DOCUMENT_ID, 0);
             Console.WriteLine(permissionsResponse.ToStringExtension());
             Console.WriteLine("All Permissions:");
             Console.WriteLine(chino.permissions.readPermissions(0).ToStringExtension());
+            
             chino.auth.logoutUser(loggedUser.access_token, app.app_id, app.app_secret);
+            
             chino.initClient(hostUrl, customerId, customerKey);
             attributes = new Dictionary<string, object>();
             attributes.Add("test_attribute_1", "test_value");
             attributes.Add("test_attribute_2", 123);
+            
             Group group = chino.groups.create("test_group_name", attributes);
             GROUP_ID = group.group_id;
+            
             rule = new PermissionRule();
             rule.setAuthorize(PermissionValues.READ, PermissionValues.UPDATE);
             rule.setManage(PermissionValues.READ, PermissionValues.UPDATE, PermissionValues.CREATE);
             chino.permissions.permissionsOnResources(PermissionValues.GRANT, PermissionValues.REPOSITORIES, PermissionValues.GROUPS, GROUP_ID, rule);
             chino.permissions.permissionsOnResourceChildren(PermissionValues.GRANT, PermissionValues.REPOSITORIES, REPOSITORY_ID, PermissionValues.SCHEMAS, PermissionValues.GROUPS, GROUP_ID, rule);
+            
             Console.WriteLine("Permissions of the Group:");
             Console.WriteLine(chino.permissions.readPermissionsOfaGroup(GROUP_ID, 0).ToStringExtension());
         }

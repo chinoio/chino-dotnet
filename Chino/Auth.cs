@@ -20,16 +20,29 @@ namespace Chino
         public LoggedUser loginUserWithPassword(string username, string password, string appId, string appSecret)
         {
             var grantType = "password";
+
+            appSecret = appSecret?? ""; // change 'null' appSecret to empty string
+            
             RestRequest request = new RestRequest("/auth/token", Method.POST);
-            client.RemoveDefaultParameter("Authorization");
-            var tot = appId + ":" + appSecret;
-            byte[] bytesToEncode = Encoding.UTF8.GetBytes(tot);
-            string encodedText = Convert.ToBase64String(bytesToEncode);
-            client.AddDefaultHeader("Authorization", "Basic " + encodedText);
-            request.AddHeader("Content-Type", "multipart/form-data");
+            
+            // init random boundary
+            var boundary = "ChinoDotNet-" + 
+                new string(Enumerable.Repeat("ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789", 8)
+                    .Select(s => s[new Random().Next(s.Length)])
+                    .ToArray());
+            // write request data as multipart body
+            request.AddHeader("Content-Type", "multipart/form-data; boundary=----" + boundary);
+            request.AlwaysMultipartFormData = true;
             request.AddParameter("grant_type", grantType);
             request.AddParameter("username", username);
             request.AddParameter("password", password);
+            
+            // override Authentication with OAuth2 client credentials (in body)
+            client.RemoveDefaultParameter("Authorization");
+            request.AddParameter("client_id", appId);
+            request.AddParameter("client_secret", appSecret);
+            
+            // handle response
             IRestResponse response = client.Execute(request);
             if (response.ErrorException != null)
             {
