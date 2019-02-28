@@ -25,22 +25,30 @@ namespace Chino
             
             RestRequest request = new RestRequest("/auth/token", Method.POST);
             
-            // init random boundary
-            var boundary = "ChinoDotNet-" + 
-                new string(Enumerable.Repeat("ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789", 8)
-                    .Select(s => s[new Random().Next(s.Length)])
-                    .ToArray());
-            // write request data as multipart body
-            request.AddHeader("Content-Type", "multipart/form-data; boundary=----" + boundary);
-            request.AlwaysMultipartFormData = true;
-            request.AddParameter("grant_type", grantType);
-            request.AddParameter("username", username);
-            request.AddParameter("password", password);
-            
-            // override Authentication with OAuth2 client credentials (in body)
+            // remove Authentication header (replaced with OAuth2 client credentials in request body)
             client.RemoveDefaultParameter("Authorization");
-            request.AddParameter("client_id", appId);
-            request.AddParameter("client_secret", appSecret);
+            request.AddHeader("cache-control", "no-cache");
+            request.AddHeader("content-type", "multipart/form-data; boundary=----WebKitFormBoundary7MA4YWxkTrZu0gW");
+            
+            // write request data as multipart body
+            request.AddParameter
+            (
+                "multipart/form-data; boundary=----WebKitFormBoundary7MA4YWxkTrZu0gW",
+                
+                "------WebKitFormBoundary7MA4YWxkTrZu0gW\r\n" +
+                "Content-Disposition: form-data; name=\"username\"\r\n\r\n" + username + "\r\n" +
+                "------WebKitFormBoundary7MA4YWxkTrZu0gW\r\n" +
+                "Content-Disposition: form-data; name=\"password\"\r\n\r\n" + password + "\r\n" +
+                "------WebKitFormBoundary7MA4YWxkTrZu0gW\r\n" +
+                "Content-Disposition: form-data; name=\"grant_type\"\r\n\r\n" + password + "\r\n" +
+                "------WebKitFormBoundary7MA4YWxkTrZu0gW\r\n" +
+                "Content-Disposition: form-data; name=\"client_id\"\r\n\r\n" + appId + "\r\n" +
+                "------WebKitFormBoundary7MA4YWxkTrZu0gW\r\n" +
+                "Content-Disposition: form-data; name=\"client_secret\"\r\n\r\n" + appSecret + "\r\n" +
+                "------WebKitFormBoundary7MA4YWxkTrZu0gW--",
+                ParameterType.RequestBody
+            );
+            
             
             // handle response
             IRestResponse response = client.Execute(request);
