@@ -60,13 +60,14 @@ namespace Chino
 
         }
 
-        public Application create(string name, string grant_type, string redirect_url)
+        public Application create(string name, string grant_type, string redirect_url = "", string client_type="confidential")
         {
             RestRequest request = new RestRequest("/auth/applications", Method.POST);
             CreateApplicationRequest applicationRequest = new CreateApplicationRequest();
             applicationRequest.name = name;
             applicationRequest.grant_type = grant_type;
             applicationRequest.redirect_url = redirect_url;
+            applicationRequest.client_type = client_type;
             request.AddJsonBody(applicationRequest);
             IRestResponse response = client.Execute(request);
             if (response.ErrorException != null)
@@ -86,13 +87,14 @@ namespace Chino
             }
         }
 
-        public Application update(string applicationId, string name, string grant_type, string redirect_url)
+        public Application update(string applicationId, string name, string grant_type, string redirect_url = "", string client_type="confidential")
         {
             RestRequest request = new RestRequest("/auth/applications/" + applicationId, Method.PUT);
             CreateApplicationRequest applicationRequest = new CreateApplicationRequest();
             applicationRequest.name = name;
             applicationRequest.grant_type = grant_type;
             applicationRequest.redirect_url = redirect_url;
+            applicationRequest.client_type = client_type;
             request.AddJsonBody(applicationRequest);
             IRestResponse response = client.Execute(request);
             if (response.ErrorException != null)
@@ -114,15 +116,10 @@ namespace Chino
 
         public String delete(string applicationId, bool force)
         {
-            RestRequest request;
-            if (force)
-            {
-                request = new RestRequest("/auth/applications/" + applicationId + "?force=true", Method.DELETE);
-            }
-            else
-            {
-                request = new RestRequest("/auth/applications/" + applicationId, Method.DELETE);
-            }
+            RestRequest request = new RestRequest
+            (
+                "/auth/applications/" + applicationId + (force ? "?force=true" : "") , Method.DELETE
+            );
             IRestResponse response = client.Execute(request);
             if (response.ErrorException != null)
             {
@@ -137,12 +134,15 @@ namespace Chino
 
 public class CreateApplicationRequest
 {
+
     [JsonProperty(PropertyName = "name")]
     public String name { get; set; }
     [JsonProperty(PropertyName = "grant_type")]
     public String grant_type { get; set; }
     [JsonProperty(PropertyName = "redirect_url")]
     public String redirect_url { get; set; }
+    [JsonProperty(PropertyName = "client_type")]
+    public string client_type { get; set; }
 }
 
 public class Application
@@ -157,6 +157,7 @@ public class Application
     public String redirect_url { get; set; }
     [JsonProperty(PropertyName = "app_id")]
     public String app_id { get; set; }
+    
 }
 
 public class ApplicationsObject
