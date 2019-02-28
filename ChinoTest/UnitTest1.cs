@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Chino;
 using System.Collections.Generic;
@@ -28,12 +28,9 @@ namespace ChinoTest
         String COLLECTION_ID = "";
         String REPOSITORY_ID = "";
         String GROUP_ID = "";
-        String customerId = "fd890009-30f7-42ad-97bd-0ce71f7a2859";
-        String customerKey = "108c3d15-200a-42e8-bbe3-7fe48535d89e";
-        String hostUrl = "http://localhost:8000/v1";
-//        readonly String customerId = Environment.GetEnvironmentVariable("customerId") ?? Environment.GetEnvironmentVariable("customer_id") ;
-//        readonly String customerKey = Environment.GetEnvironmentVariable("customerKey") ?? Environment.GetEnvironmentVariable("customer_key") ;
-//        readonly String hostUrl = Environment.GetEnvironmentVariable("host") ?? "https://api.test.chino.io/v1";
+        String customerId = "<your-customer-id>";
+        String customerKey = "<your-customer-key>";
+        String hostUrl = "https://api.test.chino.io/v1";
 
 
         [TestMethod]
