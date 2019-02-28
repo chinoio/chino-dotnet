@@ -411,38 +411,40 @@ namespace ChinoTest
         public void TestPermissions()
         {
             // SETUP
-            ChinoAPI chino = new ChinoAPI(hostUrl, customerId, customerKey);
-            deleteAll(chino);
             
-            Repository repo = chino.repositories.create("test_repo_description");
+            Console.WriteLine("Test setup");
+            
+            ChinoAPI chinoAdmin = new ChinoAPI(hostUrl, customerId, customerKey);
+            deleteAll(chinoAdmin);
+            ChinoAPI chino = new ChinoAPI(hostUrl);
+
+            Repository repo = chinoAdmin.repositories.create("test_repo_description");
             REPOSITORY_ID = repo.repository_id;
             
-            Schema schema = chino.schemas.create(REPOSITORY_ID, "schema_description_2", typeof(SchemaStructureSample));
+            Schema schema = chinoAdmin.schemas.create(REPOSITORY_ID, "schema_description_2", typeof(SchemaStructureSample));
             SCHEMA_ID_1 = schema.schema_id;
             
-            UserSchema userSchema = chino.userSchemas.create("user_schema_description_2", typeof(UserSchemaStructureSample));
+            UserSchema userSchema = chinoAdmin.userSchemas.create("user_schema_description_2", typeof(UserSchemaStructureSample));
             USER_SCHEMA_ID_1 = userSchema.user_schema_id;
             
-            Application app = chino.applications.create("app_sdk_dotnet", "password", "");
-            
-            // TODO remove
-//            LoggedUser test = chino.auth.loginUserWithPassword("Giovanni", "\"password\"", "hSnQkZyiEv8SbWOtxlLJwC4aEc9rphMycuDiY57t", null);
-
-            // END
+            Application app = chinoAdmin.applications.create("app_sdk_dotnet", "password", "");
             
             Dictionary<String, Object> attributes = new Dictionary<string, object>();
             attributes.Add("test_integer", 123);
             attributes.Add("test_string", "string_value");
             attributes.Add("test_boolean", true);
             attributes.Add("test_date", "1997-12-03");
-            User user = chino.users.create("Giovanni", "password", attributes, USER_SCHEMA_ID_1);
+            User user = chinoAdmin.users.create("Giovanni", "password", attributes, USER_SCHEMA_ID_1);
             USER_ID = user.user_id;
+            
+            Console.WriteLine();
+            Console.WriteLine("Test started");
             
             // TEST perms on a Schema and new Documents
             PermissionRule rule = new PermissionRule();
             rule.setAuthorize(PermissionValues.READ);
             rule.setManage(PermissionValues.READ, PermissionValues.UPDATE, PermissionValues.DELETE);
-            Console.WriteLine(chino.permissions.permissionsOnaResource(PermissionValues.GRANT, PermissionValues.REPOSITORIES, REPOSITORY_ID, PermissionValues.USERS, USER_ID, rule));
+            Console.WriteLine(chinoAdmin.permissions.permissionsOnaResource(PermissionValues.GRANT, PermissionValues.REPOSITORIES, REPOSITORY_ID, PermissionValues.USERS, USER_ID, rule));
             
             PermissionRuleCreatedDocument permissionRuleCreatedDocument = new PermissionRuleCreatedDocument();
             permissionRuleCreatedDocument.setAuthorize("R", "C", "U");
@@ -451,7 +453,7 @@ namespace ChinoTest
             rule.setAuthorize("R", "U");
             rule.setManage("R", "U", "D");
             permissionRuleCreatedDocument.created_document = rule;
-            Console.WriteLine(chino.permissions.permissionsOnResourceChildren(PermissionValues.GRANT, PermissionValues.SCHEMAS, SCHEMA_ID_1, PermissionValues.DOCUMENTS, PermissionValues.USERS, USER_ID, permissionRuleCreatedDocument));
+            Console.WriteLine(chinoAdmin.permissions.permissionsOnResourceChildren(PermissionValues.GRANT, PermissionValues.SCHEMAS, SCHEMA_ID_1, PermissionValues.DOCUMENTS, PermissionValues.USERS, USER_ID, permissionRuleCreatedDocument));
             
             LoggedUser loggedUser = chino.auth.loginUserWithPassword("Giovanni", "password", app.app_id, app.app_secret);
             chino.initClient(hostUrl, loggedUser.access_token);
@@ -461,33 +463,19 @@ namespace ChinoTest
             content.Add("test_string", "string_value");
             content.Add("test_boolean", true);
             content.Add("test_date", "1997-12-03");
-            Document document = chino.documents.create(content, SCHEMA_ID_1);
+            Document document = chinoAdmin.documents.create(content, SCHEMA_ID_1);
             DOCUMENT_ID = document.document_id;
             
             chino.auth.checkUserStatus();
-            
-            Console.WriteLine("Permissions of the User:");
-            GetPermissionsResponse permissionsResponse = chino.permissions.readPermissionsOfaUser(USER_ID, 0);
+            GetPermissionsResponse permissionsResponse = chinoAdmin.permissions.readPermissionsOfaUser(USER_ID, 0);
+
+            Console.WriteLine("[Admin] Permissions of the User:\n" + "{");
             Console.WriteLine(permissionsResponse.ToStringExtension());
-            //This is the way to access the permissions
-            foreach (Permission p in permissionsResponse.permissions)
-            {
-                List<String> authorize = p.getAuthorize();
-                List<String> manage = p.getManage();
-                List<String> authorizeCreatedDocument = p.getAuthorizeCreatedDocument();
-                List<String> manageCreatedDocument = p.getManageCreatedDocument();
-                Console.WriteLine("Authorize: " + string.Join(",", authorize.ToArray()));
-                Console.WriteLine("Manage: " + string.Join(",", manage.ToArray()));
-                //Console.WriteLine("Authorize Created Document: " + string.Join(",", authorizeCreatedDocument.ToArray()));
-                //Console.WriteLine("Manage Created Document: " + string.Join(",", manageCreatedDocument.ToArray()));
-                Console.WriteLine("");
-            }
+            Console.WriteLine("}\n");
             
-            Console.WriteLine("Permissions on the Document:");
-            permissionsResponse = chino.permissions.readPermissionsOnaDocument(DOCUMENT_ID, 0);
-            Console.WriteLine(permissionsResponse.ToStringExtension());
-            Console.WriteLine("All Permissions:");
+            Console.WriteLine("[USER] Permissions of the User:\n" + "{");
             Console.WriteLine(chino.permissions.readPermissions(0).ToStringExtension());
+            Console.WriteLine("}\n");
             
             chino.auth.logoutUser(loggedUser.access_token, app.app_id, app.app_secret);
             
@@ -496,17 +484,18 @@ namespace ChinoTest
             attributes.Add("test_attribute_1", "test_value");
             attributes.Add("test_attribute_2", 123);
             
-            Group group = chino.groups.create("test_group_name", attributes);
+            Group group = chinoAdmin.groups.create("test_group_name", attributes);
             GROUP_ID = group.group_id;
             
             rule = new PermissionRule();
             rule.setAuthorize(PermissionValues.READ, PermissionValues.UPDATE);
             rule.setManage(PermissionValues.READ, PermissionValues.UPDATE, PermissionValues.CREATE);
-            chino.permissions.permissionsOnResources(PermissionValues.GRANT, PermissionValues.REPOSITORIES, PermissionValues.GROUPS, GROUP_ID, rule);
-            chino.permissions.permissionsOnResourceChildren(PermissionValues.GRANT, PermissionValues.REPOSITORIES, REPOSITORY_ID, PermissionValues.SCHEMAS, PermissionValues.GROUPS, GROUP_ID, rule);
+            chinoAdmin.permissions.permissionsOnResources(PermissionValues.GRANT, PermissionValues.REPOSITORIES, PermissionValues.GROUPS, GROUP_ID, rule);
+            chinoAdmin.permissions.permissionsOnResourceChildren(PermissionValues.GRANT, PermissionValues.REPOSITORIES, REPOSITORY_ID, PermissionValues.SCHEMAS, PermissionValues.GROUPS, GROUP_ID, rule);
             
-            Console.WriteLine("Permissions of the Group:");
+            Console.WriteLine("[ADMIN] Permissions of the Group:\n" + "{");
             Console.WriteLine(chino.permissions.readPermissionsOfaGroup(GROUP_ID, 0).ToStringExtension());
+            Console.WriteLine("}\n");
         }
 
         [TestMethod]
