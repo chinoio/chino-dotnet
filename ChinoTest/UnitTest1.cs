@@ -36,7 +36,8 @@ namespace ChinoTest
         {
             _customerId = Environment.GetEnvironmentVariable("customer_id");
             _customerKey= Environment.GetEnvironmentVariable("customer_key");
-            _hostUrl = Environment.GetEnvironmentVariable("host");
+            _hostUrl = Environment.GetEnvironmentVariable("host") ?? "https://api.test.chino.io/v1";
+            Console.WriteLine($"Starting tests against host: {_hostUrl}");
         }
 
 

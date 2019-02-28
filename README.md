@@ -29,8 +29,10 @@ Install requirements using NuGet. To install `Chino.dll`, run the following comm
 
 Tests can be run using `ChinoTest\UnitTest1.cs`.
 
-Only setup required is setting the values of `customer_id`, `customer_key` and `host` in your environment variables.
-If you don't have those credentials, register at [https://console.test.chino.io/](https://console.test.chino.io/) .
+Only setup required is setting the values of `customer_id` and `customer_key` in your environment variables.
+If you don't have those credentials, register a free account at [https://console.test.chino.io/](https://console.test.chino.io/) .
+
+You can also set `host`, otherwise it will default to `https://api.test.chino.io/v1`.
 
 **NOTE:** If you are using an IDE other than Visual Studio (e.g. IntelliJ Rider),
 you may need to install also VisualStudio for running Unit Tests.
