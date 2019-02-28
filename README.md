@@ -4,6 +4,9 @@ A C# SDK for using [Chino.io API](https://chino.io) with the .NET framework.
 
 *Read the full docs at https://docs.chino.io*
 
+**Note:** The SDK is still in a beta phase. If something is wrong, please 
+[open an issue](https://github.com/chinoio/chino-dotnet/issues/new) on Github.
+
 [See changelog](./CHANGELOG.md)
 
 ## Contacts

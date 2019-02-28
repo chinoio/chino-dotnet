@@ -1,11 +1,11 @@
 # Changelog
 
-
+Current: 
 ### v`0.1` | feb 2019
 
-***Pre-release***
+***Note: This is a Pre-release.***
  
-Implements main classes of the SDK:
+Implements main features of the SDK:
 
 * Chino API client
 * Applications
@@ -21,3 +21,5 @@ Implements main classes of the SDK:
 * Search
 * UserSchemas
 * Users
+
+Created a suite of basic unit tests
