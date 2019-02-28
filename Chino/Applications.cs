@@ -87,13 +87,14 @@ namespace Chino
             }
         }
 
-        public Application update(string applicationId, string name, string grant_type, string redirect_url)
+        public Application update(string applicationId, string name, string grant_type, string redirect_url = "", string client_type="confidential")
         {
             RestRequest request = new RestRequest("/auth/applications/" + applicationId, Method.PUT);
             CreateApplicationRequest applicationRequest = new CreateApplicationRequest();
             applicationRequest.name = name;
             applicationRequest.grant_type = grant_type;
             applicationRequest.redirect_url = redirect_url;
+            applicationRequest.client_type = client_type;
             request.AddJsonBody(applicationRequest);
             IRestResponse response = client.Execute(request);
             if (response.ErrorException != null)

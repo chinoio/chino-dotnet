@@ -15,7 +15,6 @@ namespace ChinoTest
         private const String Path = "attachments";
         private const String Destination = "attachments/temp";
         
-        private String _appId = "";
         private String _userSchemaId1 = "";
         private String _userSchemaId2 = "";
         private String _userSchemaId3 = "";
@@ -28,15 +27,23 @@ namespace ChinoTest
         private String _repositoryId = "";
         private String _groupId = "";
         
-        readonly String customerId = "<your-customer-id>";
-        readonly String customerKey = "<your-customer-key>";
-        readonly String hostUrl = "https://api.test.chino.io/v1";
+        private static String _customerId;
+        private static String _customerKey;
+        private static String _hostUrl;
+
+        [AssemblyInitialize]
+        public static void beforeAll(TestContext ctx)
+        {
+            _customerId = Environment.GetEnvironmentVariable("customer_id");
+            _customerKey= Environment.GetEnvironmentVariable("customer_key");
+            _hostUrl = Environment.GetEnvironmentVariable("host");
+        }
 
 
         [TestMethod]
         public void testRepositories()
         {
-            ChinoAPI chino = new ChinoAPI(hostUrl, customerId, customerKey);
+            ChinoAPI chino = new ChinoAPI(_hostUrl, _customerId, _customerKey);
             GetRepositoriesResponse repos = chino.repositories.list(0);
             foreach (Repository r in repos.repositories)
             {
@@ -54,25 +61,46 @@ namespace ChinoTest
         [TestMethod]
         public void testApplications()
         {
-            ChinoAPI chino = new ChinoAPI(hostUrl, customerId, customerKey);
-            Application app = chino.applications.create("application_sdk_dotnet", "password", "");
-            _appId = app.app_id;
-            Console.WriteLine(chino.applications.read(_appId).ToStringExtension());
-            Console.WriteLine(chino.applications.update(_appId, "application_sdk_dotnet_updated", "password", "").ToStringExtension());
-            Console.WriteLine(chino.applications.create("application_sdk_dotnet_2", "password", "").ToStringExtension());
+            ChinoAPI chino = new ChinoAPI(_hostUrl, _customerId, _customerKey);
+            
+            // password - confidential
+            Application app = chino.applications.create("app_pswd_sdk_dotnet", "password");
+            var appId = app.app_id;
+            Console.WriteLine(chino.applications.read(appId).ToStringExtension());
+            Console.WriteLine(chino.applications.update(appId, "app_pswd_sdk_dotnet_updated", "password", "").ToStringExtension());
+
+            // password - public
+            Console.WriteLine(chino.applications.create("app_pswd_sdk_dotnet_public", "password", "", client_type: "public").ToStringExtension());
+            appId = app.app_id;
+            Console.WriteLine(chino.applications.read(appId).ToStringExtension());
+            Console.WriteLine(chino.applications.update(appId, "app_pswd_sdk_dotnet_public_updated", "password").ToStringExtension());
+
+            // authcode - confidential
+            app = chino.applications.create("app_code_sdk_dotnet", "authorization-code", "https://example.com");
+            appId = app.app_id;
+            Console.WriteLine(chino.applications.read(appId).ToStringExtension());
+            Console.WriteLine(chino.applications.update(appId, "app_code_sdk_dotnet_updated",  "authorization-code", "https://example.com").ToStringExtension());
+
+            // authcode - public
+            app = chino.applications.create("app_code_sdk_dotnet", "authorization-code", "https://example.com", "public");
+            appId = app.app_id;
+            Console.WriteLine(chino.applications.read(appId).ToStringExtension());
+            Console.WriteLine(chino.applications.update(appId, "app_code_sdk_dotnet_updated",  "authorization-code", client_type:"public", redirect_url:"https://example.com").ToStringExtension());
+
+
             GetApplicationsResponse apps = chino.applications.list(0);
             foreach (ApplicationsObject a in apps.applications)
             {
                 Console.WriteLine(chino.applications.delete(a.app_id, true));
             }
             
-            
+            appId = null;
         }
 
         [TestMethod]
         public void testSchemas()
         {
-            ChinoAPI chino = new ChinoAPI(hostUrl, customerId, customerKey);
+            ChinoAPI chino = new ChinoAPI(_hostUrl, _customerId, _customerKey);
             GetRepositoriesResponse repos = chino.repositories.list(0);
             foreach (Repository r in repos.repositories)
             {
@@ -117,7 +145,7 @@ namespace ChinoTest
         [TestMethod]
         public void testUserSchemas()
         {
-            ChinoAPI chino = new ChinoAPI(hostUrl, customerId, customerKey);
+            ChinoAPI chino = new ChinoAPI(_hostUrl, _customerId, _customerKey);
             GetUserSchemasResponse userschemas = chino.userSchemas.list(0);
             foreach (UserSchema u in userschemas.user_schemas)
             {
@@ -160,7 +188,7 @@ namespace ChinoTest
         [TestMethod]
         public void testUsers()
         {
-            ChinoAPI chino = new ChinoAPI(hostUrl, customerId, customerKey);
+            ChinoAPI chino = new ChinoAPI(_hostUrl, _customerId, _customerKey);
             GetUserSchemasResponse userschemas = chino.userSchemas.list(0);
             foreach (UserSchema u in userschemas.user_schemas)
             {
@@ -192,10 +220,10 @@ namespace ChinoTest
             Application app = chino.applications.create("application_sdk_dotnet", "password", "");
             LoggedUser loggedUser = chino.auth.loginUserWithPassword("Giovanni", "password", app.app_id, app.app_secret);
             Console.WriteLine(loggedUser.ToStringExtension());
-            chino.initClient(hostUrl, loggedUser.access_token);
+            chino.initClient(_hostUrl, loggedUser.access_token);
             Console.WriteLine(chino.auth.checkUserStatus().ToStringExtension());
             Console.WriteLine(chino.auth.logoutUser(loggedUser.access_token, app.app_id, app.app_secret));
-            chino.initClient(hostUrl, customerId, customerKey);
+            chino.initClient(_hostUrl, _customerId, _customerKey);
             //LoggedUser loggedUser = chino.auth.loginUser("Giovanni", "password", customerId);
             //When you have logged the user and you have the token you need to init the client passing the token in the function
             //chino.initClient(hostUrl, loggedUser.access_token);
@@ -208,7 +236,7 @@ namespace ChinoTest
         [TestMethod]
         public void testDocuments()
         {
-            ChinoAPI chino = new ChinoAPI(hostUrl, customerId, customerKey);
+            ChinoAPI chino = new ChinoAPI(_hostUrl, _customerId, _customerKey);
             GetRepositoriesResponse repos = chino.repositories.list(0);
             foreach (Repository r in repos.repositories)
             {
@@ -245,7 +273,7 @@ namespace ChinoTest
         [TestMethod]
         public void testCollections()
         {
-            ChinoAPI chino = new ChinoAPI(hostUrl, customerId, customerKey);
+            ChinoAPI chino = new ChinoAPI(_hostUrl, _customerId, _customerKey);
             GetRepositoriesResponse repos = chino.repositories.list(0);
             foreach (Repository r in repos.repositories)
             {
@@ -288,7 +316,7 @@ namespace ChinoTest
         [TestMethod]
         public void testGroups()
         {
-            ChinoAPI chino = new ChinoAPI(hostUrl, customerId, customerKey);
+            ChinoAPI chino = new ChinoAPI(_hostUrl, _customerId, _customerKey);
             GetUserSchemasResponse userschemas = chino.userSchemas.list(0);
             foreach (UserSchema u in userschemas.user_schemas)
             {
@@ -328,7 +356,7 @@ namespace ChinoTest
         [TestMethod]
         public void testSearch()
         {
-            ChinoAPI chino = new ChinoAPI(hostUrl, customerId, customerKey);
+            ChinoAPI chino = new ChinoAPI(_hostUrl, _customerId, _customerKey);
             deleteAll(chino);
             Repository repo = chino.repositories.create("test_repo_description");
             _repositoryId = repo.repository_id;
@@ -411,9 +439,9 @@ namespace ChinoTest
             
             Console.WriteLine("Test setup");
             
-            ChinoAPI chinoAdmin = new ChinoAPI(hostUrl, customerId, customerKey);
+            ChinoAPI chinoAdmin = new ChinoAPI(_hostUrl, _customerId, _customerKey);
             deleteAll(chinoAdmin);
-            ChinoAPI chino = new ChinoAPI(hostUrl);
+            ChinoAPI chino = new ChinoAPI(_hostUrl);
 
             Repository repo = chinoAdmin.repositories.create("test_repo_description");
             _repositoryId = repo.repository_id;
@@ -453,7 +481,7 @@ namespace ChinoTest
             Console.WriteLine(chinoAdmin.permissions.permissionsOnResourceChildren(PermissionValues.GRANT, PermissionValues.SCHEMAS, _schemaId1, PermissionValues.DOCUMENTS, PermissionValues.USERS, _userId, permissionRuleCreatedDocument));
             
             LoggedUser loggedUser = chino.auth.loginUserWithPassword("Giovanni", "password", app.app_id, app.app_secret);
-            chino.initClient(hostUrl, loggedUser.access_token);
+            chino.initClient(_hostUrl, loggedUser.access_token);
             
             Dictionary<String, Object> content = new Dictionary<string, object>();
             content.Add("test_integer", 123);
@@ -476,7 +504,7 @@ namespace ChinoTest
             
             chino.auth.logoutUser(loggedUser.access_token, app.app_id, app.app_secret);
             
-            chino.initClient(hostUrl, customerId, customerKey);
+            chino.initClient(_hostUrl, _customerId, _customerKey);
             attributes = new Dictionary<string, object>();
             attributes.Add("test_attribute_1", "test_value");
             attributes.Add("test_attribute_2", 123);
@@ -498,7 +526,7 @@ namespace ChinoTest
         [TestMethod]
         public void testBlobs()
         {
-            ChinoAPI chino = new ChinoAPI(hostUrl, customerId, customerKey);
+            ChinoAPI chino = new ChinoAPI(_hostUrl, _customerId, _customerKey);
             GetRepositoriesResponse repos = chino.repositories.list(0);
             foreach (Repository r in repos.repositories)
             {
