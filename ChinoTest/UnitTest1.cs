@@ -12,8 +12,8 @@ namespace ChinoTest
     public class TrivialTest
     {
         private const String FileName = "003.pdf";
-        private const String Path = "attachments";
-        private const String Destination = "attachments/temp";
+        private const String Path = "Resources/attachments";
+        private const String Destination = "Resources/attachments/temp";
         
         private String _userSchemaId1 = "";
         private String _userSchemaId2 = "";
@@ -37,7 +37,16 @@ namespace ChinoTest
             _customerId = Environment.GetEnvironmentVariable("customer_id");
             _customerKey= Environment.GetEnvironmentVariable("customer_key");
             _hostUrl = Environment.GetEnvironmentVariable("host") ?? "https://api.test.chino.io/v1";
-            Console.WriteLine($"Starting tests against host: {_hostUrl}");
+            
+            
+        }
+        
+        [TestInitialize]
+        public void Startup()
+        {
+            Console.WriteLine($"HOST: {_hostUrl}");
+            Console.WriteLine($"ID  : ********{_customerId.Substring(_customerId.Length - 5)}");
+            Console.WriteLine($"KEY : ********{_customerKey.Substring(_customerKey.Length - 5)}");
         }
 
 
@@ -550,6 +559,17 @@ namespace ChinoTest
             GetBlobResponse blobResponse = chino.blobs.get(commitBlobUploadResponse.blob.blob_id, Destination);
             Console.WriteLine(blobResponse.ToStringExtension());
             Console.WriteLine(chino.blobs.delete(commitBlobUploadResponse.blob.blob_id, true));
+        }
+
+        [TestMethod]
+        [ExpectedException(typeof(ChinoApiException),
+            "Expected exception: ChinoApiException")]
+        public void testException()
+        {
+            var chino = new ChinoAPI(_hostUrl, "Invalid-ID", "Invalid-Key");
+            
+            // should raise ChinoApiException, 401
+            chino.repositories.list(0);
         }
 
         public void deleteAll(ChinoAPI chino)

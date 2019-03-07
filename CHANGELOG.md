@@ -1,7 +1,16 @@
 # Changelog
 
-Current: 
-### v`0.1` | feb 2019
+### v`0.1` (Current)
+
+#### alpha.2 | mar 3rd 2019
+
+Added ChinoApiException and fixed project structure
+
+Added test resources for BLOBs test
+
+Fixed test suite
+
+#### alpha | feb 2019
 
 ***Note: This is a Pre-release.***
  
@@ -11,7 +20,6 @@ Implements main features of the SDK:
 * Applications
 * Auth
 * Blobs
-* ChinoApiException
 * Collections
 * Documents
 * Groups
