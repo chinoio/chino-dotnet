@@ -552,6 +552,17 @@ namespace ChinoTest
             Console.WriteLine(chino.blobs.delete(commitBlobUploadResponse.blob.blob_id, true));
         }
 
+        [TestMethod]
+        [ExpectedException(typeof(ChinoApiException),
+            "Expected exception: ChinoApiException")]
+        public void testException()
+        {
+            var chino = new ChinoAPI(_hostUrl, "Invalid-ID", "Invalid-Key");
+            
+            // should raise ChinoApiException, 401
+            chino.repositories.list(0);
+        }
+
         public void deleteAll(ChinoAPI chino)
         {
             List<Repository> repos = chino.repositories.list(0).repositories;
