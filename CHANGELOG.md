@@ -2,6 +2,12 @@
 
 ### v`0.1` (Current)
 
+#### alpha.3 | apr 4th 2019
+
+Marked old Search API as `Obsolete` with a warning shown on compilation.
+
+Added new Search API
+
 #### alpha.2 | mar 3rd 2019
 
 Added ChinoApiException and fixed project structure
