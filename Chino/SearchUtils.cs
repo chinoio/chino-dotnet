@@ -4,14 +4,14 @@ namespace Chino
 {
     public enum FilterOperatorEnum
     {
-        EQUALS,
-        GREATER_EQUAL,
-        GREATER_THAN,
-        IN,
-        IS,
-        LIKE,
-        LOWER_EQUAL,
-        LOWER_THAN
+        Equals,
+        GreaterEqual,
+        GreaterThan,
+        In,
+        Is,
+        Like,
+        LowerEqual,
+        LowerThan
     }
         
     public class FilterOperator
@@ -25,19 +25,19 @@ namespace Chino
         
         public string toJson() {
             switch (_enumValue) {
-                case FilterOperatorEnum.EQUALS:
+                case FilterOperatorEnum.Equals:
                     return "eq";
-                case FilterOperatorEnum.LOWER_THAN:
+                case FilterOperatorEnum.LowerThan:
                     return "lt";
-                case FilterOperatorEnum.LOWER_EQUAL:
+                case FilterOperatorEnum.LowerEqual:
                     return "lte";
-                case FilterOperatorEnum.GREATER_THAN:
+                case FilterOperatorEnum.GreaterThan:
                     return "gt";
-                case FilterOperatorEnum.GREATER_EQUAL:
+                case FilterOperatorEnum.GreaterEqual:
                     return "gte";
-                case FilterOperatorEnum.IS:
-                case FilterOperatorEnum.IN:
-                case FilterOperatorEnum.LIKE:
+                case FilterOperatorEnum.Is:
+                case FilterOperatorEnum.In:
+                case FilterOperatorEnum.Like:
                     return _enumValue.ToString().ToLower();
                 default:
                     throw new NotSupportedException($"{ _enumValue } is not a valid FilterOperator");
@@ -46,20 +46,20 @@ namespace Chino
         
         public override string ToString() {
             switch (_enumValue) {
-                case FilterOperatorEnum.EQUALS:
+                case FilterOperatorEnum.Equals:
                     return "=";
-                case FilterOperatorEnum.LOWER_THAN:
+                case FilterOperatorEnum.LowerThan:
                     return "<";
-                case FilterOperatorEnum.LOWER_EQUAL:
+                case FilterOperatorEnum.LowerEqual:
                     return "<=";
-                case FilterOperatorEnum.GREATER_THAN:
+                case FilterOperatorEnum.GreaterThan:
                     return ">";
-                case FilterOperatorEnum.GREATER_EQUAL:
+                case FilterOperatorEnum.GreaterEqual:
                     return ">=";
-                case FilterOperatorEnum.LIKE:
+                case FilterOperatorEnum.Like:
                     return "matches";
-                case FilterOperatorEnum.IS:
-                case FilterOperatorEnum.IN:
+                case FilterOperatorEnum.Is:
+                case FilterOperatorEnum.In:
                     return _enumValue.ToString().ToLower();
                 default:
                     throw new NotSupportedException($"{ _enumValue } is not a valid FilterOperator");
@@ -69,12 +69,12 @@ namespace Chino
     
     public enum ResultTypeEnum 
     {
-        FULL_CONTENT,
-        NO_CONTENT,
-        ONLY_ID,
-        COUNT,
-        EXISTS,
-        USERNAME_EXISTS
+        FullContent,
+        NoContent,
+        OnlyId,
+        Count,
+        Exists,
+        UsernameExists
     }
 
     public class ResultType
