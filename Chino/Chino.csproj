@@ -66,6 +66,7 @@
     <Compile Include="Groups.cs" />
     <Compile Include="Collections.cs" />
     <Compile Include="Documents.cs" />
+    <Compile Include="SearchUtils.cs" />
     <Compile Include="Users.cs" />
     <Compile Include="UserSchemas.cs" />
     <Compile Include="Schemas.cs" />
