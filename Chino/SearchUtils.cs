@@ -1,4 +1,5 @@
 using System;
+using System.Text;
 
 namespace Chino
 {
@@ -23,7 +24,7 @@ namespace Chino
             _enumValue = enumValue;
         }
         
-        public string toJson() {
+        public string toJSON() {
             switch (_enumValue) {
                 case FilterOperatorEnum.Equals:
                     return "eq";
@@ -91,4 +92,11 @@ namespace Chino
             return _enumValue.ToString().ToLower();
         }
     }
+
+    public interface ISearchTreeNode
+    {
+        StringBuilder getString();
+        string parseJson(int indentLevel);
+    }
+    
 }
