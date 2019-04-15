@@ -176,14 +176,15 @@ namespace Chino
             if (element is string)
                 return "\"" + element + "\"";
 
-            bool result;
-            if (bool.TryParse(element.ToString(), out result))
+            if (bool.TryParse(element.ToString(), out var result)){
+                Console.WriteLine($"{element} -> {result}");
                 return result ? "true" : "false";
+            }
             
             return element.ToString();
         }
-        
-        public static bool IsNumber(object value)
+
+        private static bool IsNumber(object value)
         {
             return value is decimal
 //                   || value is byte
