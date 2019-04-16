@@ -585,7 +585,7 @@ namespace Chino
             }
         }
 
-        public class Not : SearchCondition
+        public class Not : SearchCondition, ISearchTreeNode
         {
 
             public Not() : base("not") { }
@@ -634,10 +634,10 @@ namespace Chino
                     : null;
             }
 
-            public StringBuilder getString()
+            StringBuilder ISearchTreeNode.getString()
             {
-                StringBuilder sb = new StringBuilder("(");
-                ISearchTreeNode child = getChild();
+                var sb = new StringBuilder("(");
+                var child = getChild();
                 if (child != null)
                 {
                     sb.Append(conditionOperator.ToUpper())
