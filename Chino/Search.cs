@@ -20,6 +20,16 @@ namespace Chino
         public Search(RestClient client) {
             this.client = client;
         }
+
+        public DocumentsSearch documents(string schemaId)
+        {
+            return new DocumentsSearch(client, schemaId);
+        }
+
+        public UsersSearch users(string userSchemaId)
+        {
+            return new UsersSearch(client, userSchemaId);
+        }
         
         
         /* OLD SEARCH API - the following API is deprecated and may be removed in a future release */
@@ -234,9 +244,6 @@ namespace Chino
             return this;
         }
     }
-    
-    
-    
     
 
     /* OLD SEARCH API - the following API is deprecated and may be removed in a future release */
