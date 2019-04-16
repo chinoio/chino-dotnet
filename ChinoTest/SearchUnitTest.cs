@@ -1,32 +1,23 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading;
 using Chino;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using static Chino.OrderEnum;
 
 namespace ChinoTest
 {
     [TestClass]
     public class SearchUnitTest
     {
-        private string _userSchemaId1 = "";
+        private string _userSchemaId = "";
         private string _schemaId = "";
         private string _userId = "";
         private string _documentId = "";
         private string _repositoryId = "";
 
         private static ChinoAPI chino;
-
-        
-        [AssemblyInitialize]
-        public static void beforeAll(TestContext ctx)
-        {
-            Const._customerId = Environment.GetEnvironmentVariable("customer_id");
-            Const._customerKey= Environment.GetEnvironmentVariable("customer_key");
-            Const._hostUrl = Environment.GetEnvironmentVariable("host") ?? "https://api.test.chino.io/v1";
-            
-            chino = new ChinoAPI(Const._hostUrl, Const._customerId, Const._customerKey);
-        }
         
         [TestInitialize]
         public void startup()
@@ -35,7 +26,9 @@ namespace ChinoTest
             Console.WriteLine($"ID  : ********{Const._customerId.Substring(Const._customerId.Length - 5)}");
             Console.WriteLine($"KEY : ********{Const._customerKey.Substring(Const._customerKey.Length - 5)}");
             Console.WriteLine("Creating test objects...");
-            
+
+            chino = new ChinoAPI(Const._hostUrl, Const._customerId, Const._customerKey);
+            Console.WriteLine("Cleanin' up test environment...");
             Const.deleteAll(chino);
             
             Repository repo = chino.repositories.create("test_repo_description");
@@ -58,7 +51,8 @@ namespace ChinoTest
 
             List<UserSchemaField> userSchemaFields = new List<UserSchemaField>
             {
-                new UserSchemaField("name", "string", true), new UserSchemaField("last_name", "string", true)
+                new UserSchemaField("name", "string", true), 
+                new UserSchemaField("last_name", "string", true)
             };
             UserSchemaStructure userSchemaStructure = new UserSchemaStructure {fields = userSchemaFields};
             UserSchemaRequest userSchemaRequest = new UserSchemaRequest
@@ -66,13 +60,19 @@ namespace ChinoTest
                 structure = userSchemaStructure, description = "user_schema"
             };
             UserSchema userSchema = chino.userSchemas.create(userSchemaRequest);
+            _userSchemaId = userSchema.user_schema_id;
 
             Dictionary<string, object> attributes = new Dictionary<string, object>
             {
                 {"name", "Giacomino"}, {"last_name", "Poretti"}
             };
-
             chino.users.create("jack@gmail.com", "password", attributes, userSchema.user_schema_id);
+
+            attributes = new Dictionary<string, object>
+            {
+                {"name", "Andrea"}, {"last_name", "Arighi"}
+            };
+            chino.users.create("tech-support@chino.io", "somePassword", attributes, userSchema.user_schema_id);
 
             Thread.Sleep(8000);
 
@@ -102,7 +102,59 @@ namespace ChinoTest
         [TestMethod]
         public void testSearch()
         {
-            chino.search.
+            // Search documents
+            var result = chino.search.documents(_schemaId)
+                .setResultType(ResultTypeEnum.Only_Id)
+                .addSortRule("test_string", Asc)
+                .with("test_integer", FilterOperator.filter(FilterOperatorEnum.GreaterThan), 1230)
+                .buildSearch().execute();
+
+            Assert.AreEqual(
+                1,
+                result.ids.Count,
+                "Search returned wrong ID count"
+            );
+            Assert.IsNull(result.documents); // should only return IDs
+
+            // Search users
+            var invalidNames = new List<string>
+            {
+                "Antonio",
+                "Marco",
+                "Lucia"
+            };
+            var search1 = chino.search.users(_userSchemaId)
+                .setResultType(ResultTypeEnum.Full_Content)
+                .addSortRule("last_name", Desc)
+                .with("last_name", FilterOperator.filter(FilterOperatorEnum.Like), "*i")
+                .andNot("name", FilterOperator.filter(FilterOperatorEnum.In), invalidNames)
+                .buildSearch();
+                
+            Assert.AreNotEqual(null, search1.ToString());
+
+            var users1 = search1.execute().users;
+            Assert.AreEqual(2, users1.Count);
+        }
+
+        [TestMethod]
+        public void testUsernameExists()
+        {
+            var search = chino.search.users(_userSchemaId)
+                .setResultType(ResultTypeEnum.Username_Exists)
+                .addSortRule("name", Desc)
+                .with("username", FilterOperator.filter(FilterOperatorEnum.Equals), "tech-support@chino.io")
+                .buildSearch();
+
+            Assert.AreNotEqual(null, search.ToString());
+            Assert.IsTrue(search.execute().exists);
+        }
+
+        [TestCleanup]
+        public void cleanUp()
+        {
+            Console.Write("Cleaning test environment...");
+            Const.deleteAll(chino);
+            Console.WriteLine(" Done.");
         }
     }
 }

@@ -1,10 +1,8 @@
-﻿using Newtonsoft.Json;
+﻿using System;
+using System.Collections.Generic;
+using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using RestSharp;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 
 namespace Chino
 {
@@ -40,23 +38,21 @@ namespace Chino
             RestRequest request = new RestRequest("/search/documents/"+schemaId, Method.POST);
             request.AddJsonBody(searchRequest);
             this.searchRequest = new SearchRequest();
-            this.sort = new List<SortOption>();
-            this.filter = new List<FilterOption>();
-            this.filterOption = new FilterOption();
+            sort = new List<SortOption>();
+            filter = new List<FilterOption>();
+            filterOption = new FilterOption();
             IRestResponse response = client.Execute(request);
             if (response.ErrorException != null)
             {
                 throw new ChinoApiException(response.ErrorMessage);
             }
-            JObject o = JObject.Parse(response.Content.ToString());
+            JObject o = JObject.Parse(response.Content);
             if ((int)o["result_code"] == 200)
             {
                 return ((JObject)o["data"]).ToObject<GetDocumentsResponse>();
             }
-            else
-            {
-                throw new ChinoApiException((String)o["message"]);
-            }
+
+            throw new ChinoApiException((String)o["message"]);
         }
 
         [Obsolete("The old Search API are deprecated and might be removed in a future release. Please considering migrating to the new Search API.")]
@@ -75,23 +71,21 @@ namespace Chino
             RestRequest request = new RestRequest("/search/users/" + userSchemaId, Method.POST);
             request.AddJsonBody(searchRequest);
             this.searchRequest = new SearchRequest();
-            this.sort = new List<SortOption>();
-            this.filter = new List<FilterOption>();
-            this.filterOption = new FilterOption();
+            sort = new List<SortOption>();
+            filter = new List<FilterOption>();
+            filterOption = new FilterOption();
             IRestResponse response = client.Execute(request);
             if (response.ErrorException != null)
             {
                 throw new ChinoApiException(response.ErrorMessage);
             }
-            JObject o = JObject.Parse(response.Content.ToString());
+            JObject o = JObject.Parse(response.Content);
             if ((int)o["result_code"] == 200)
             {
                 return ((JObject)o["data"]).ToObject<GetUsersResponse>();
             }
-            else
-            {
-                throw new ChinoApiException((String)o["message"]);
-            }
+
+            throw new ChinoApiException((String)o["message"]);
         }
 
         [Obsolete("The old Search API are deprecated and might be removed in a future release. Please considering migrating to the new Search API.")]

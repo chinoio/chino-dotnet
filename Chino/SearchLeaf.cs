@@ -2,22 +2,29 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.InteropServices;
 using System.Text;
 using RestSharp.Extensions;
 
 namespace Chino
 {
-    public abstract class SearchLeaf<TValueType> : ISearchTreeNode {
+    public abstract class SearchLeaf<TValueType> : ISearchTreeNode
+    {
+        private string _field;
+        private TValueType _value;
+
         protected string field
         {
-            get => field;
-            set => field = value;
+            get => _field;
+            set => _field = value;
         }
+
         protected FilterOperator type { get; private set; }
+
         protected TValueType value
         {
-            get => value;
-            set => this.value = value;
+            get => _value;
+            set => _value = value;
         }
 
         protected SearchLeaf (string field, FilterOperator type, TValueType value) {
@@ -26,6 +33,8 @@ namespace Chino
             this.value = value;
         }
 
+        
+        
         public void setType(FilterOperatorEnum enumType) {
             type = new FilterOperator(enumType);
         }

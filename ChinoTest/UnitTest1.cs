@@ -28,6 +28,15 @@ namespace ChinoTest
             Const._customerId = Environment.GetEnvironmentVariable("customer_id");
             Const._customerKey= Environment.GetEnvironmentVariable("customer_key");
             Const._hostUrl = Environment.GetEnvironmentVariable("host") ?? "https://api.test.chino.io/v1";
+            
+            var test = Environment.GetEnvironmentVariable("automated_test");
+            if (test == null) test = "";
+            if (! test.Equals("allow"))
+            {
+                Console.WriteLine("WARNING: running tests will delete everything on the Chino.io account!");
+                Console.WriteLine("Please set in your environment variables 'automated_test=allow'");
+                Environment.Exit(1);
+            }
         }
         
         [TestInitialize]

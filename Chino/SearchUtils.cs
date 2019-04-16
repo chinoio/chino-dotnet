@@ -89,12 +89,12 @@ namespace Chino
 
     public enum ResultTypeEnum
     {
-        FullContent,
-        NoContent,
-        OnlyId,
+        Full_Content,
+        No_Content,
+        Only_Id,
         Count,
         Exists,
-        UsernameExists
+        Username_Exists
     }
 
     public class ResultType
@@ -113,7 +113,7 @@ namespace Chino
 
         public override string ToString()
         {
-            return _enumValue.ToString().ToLower();
+            return _enumValue.ToString().ToUpper();
         }
     }
 
@@ -148,7 +148,7 @@ namespace Chino
             return new Order(o);
         }
 
-        public string toString()
+        public string ToString()
         {
             return _enumValue.ToString().ToLower();
         }
@@ -177,7 +177,7 @@ namespace Chino
                 .Append("\"field\": ").Append("\"").Append(fieldName).Append("\",\n");
             indent(sb, indentLevel)
                 .Append("\t")
-                .Append("\"order\": ").Append("\"").Append(order).Append("\"\n");
+                .Append("\"order\": ").Append("\"").Append(order.ToString()).Append("\"\n");
             indent(sb, indentLevel)
                 .Append("}");
 
@@ -198,7 +198,7 @@ namespace Chino
     public abstract class AbstractSearchClient<TResponseType>
     {
 
-        private ResultType resultType = new ResultType(ResultTypeEnum.FullContent);
+        private ResultType resultType = new ResultType(ResultTypeEnum.Full_Content);
         private ISearchTreeNode query;
         private LinkedList<SortRule> sort;
 
@@ -217,13 +217,13 @@ namespace Chino
             return this;
         }
 
-        public AbstractSearchClient<TResponseType> setResultType(ResultType resultType)
+        public AbstractSearchClient<TResponseType> setResultType(ResultTypeEnum resultType)
         {
-            this.resultType = resultType;
-            return null;
+            this.resultType = new ResultType(resultType);
+            return this;
         }
 
-        public AbstractSearchClient<TResponseType> addSortRule(string fieldName, Order order)
+        public AbstractSearchClient<TResponseType> addSortRule(string fieldName, OrderEnum order)
         {
             if (sort == null)
             {
@@ -233,10 +233,10 @@ namespace Chino
             sort.AddLast(
                 new SortRule(fieldName, order)
             );
-            return null;
+            return this;
         }
 
-        public AbstractSearchClient<TResponseType> addSortRule(string fieldName, Order order, int index)
+        public AbstractSearchClient<TResponseType> addSortRule(string fieldName, OrderEnum order, int index)
         {
             if (sort == null)
             {
@@ -256,7 +256,7 @@ namespace Chino
                 );
             }
 
-            return null;
+            return this;
         }
 
         public SearchQueryBuilder<TResponseType> with(SearchQueryBuilder<TResponseType> searchQuery)
@@ -396,6 +396,9 @@ namespace Chino
             var searchRequest = new RestRequest($"/search/documents/{ResourceId}", Method.POST, DataFormat.Json);
             searchRequest.AddJsonBody(jsonQuery);
             var response = _client.Execute(searchRequest);
+            
+            Console.WriteLine($"QUERY:\n { jsonQuery }");
+            Console.WriteLine($"RESPONSE:\n { response.Content }");
             
             if (response.ErrorException != null)
             {
@@ -780,11 +783,38 @@ namespace Chino
             );
         }
 
-        public SearchQueryBuilder<TClientResponseType> and(string fieldName, FilterOperator type, List<object> value) {
+        public SearchQueryBuilder<TClientResponseType> and<TListItem>(string fieldName, FilterOperator type, List<TListItem> value) {
             return and(
                 with(fieldName, type, value)
             );
         }
+        
+        public SearchQueryBuilder<TClientResponseType> andNot(SearchQueryBuilder<TClientResponseType> query)
+        {
+            return not(and(query));
+        }
+
+        public SearchQueryBuilder<TClientResponseType> andNot(string fieldName, FilterOperator type, int value) {
+            return not(and(fieldName, type, value));
+        }
+
+        public SearchQueryBuilder<TClientResponseType> andNot(string fieldName, FilterOperator type, float value) {
+            return not(and(fieldName, type, value));
+        }
+
+        public SearchQueryBuilder<TClientResponseType> andNot(string fieldName, FilterOperator type, bool value) {
+            return not(and(fieldName, type, value));
+        }
+
+        public SearchQueryBuilder<TClientResponseType> andNot(string fieldName, FilterOperator type, string value) {
+            return not(and(fieldName, type, value));
+        }
+
+        public SearchQueryBuilder<TClientResponseType> andNot<TListItem>(string fieldName, FilterOperator type, List<TListItem> value) {
+            return not(and(fieldName, type, value));
+        }
+        
+        // TODO orNot
 
         public SearchQueryBuilder<TClientResponseType> or(SearchQueryBuilder<TClientResponseType> query) {
             if (treeTop is SearchCondition.Or or1) {
