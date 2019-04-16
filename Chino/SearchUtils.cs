@@ -34,6 +34,11 @@ namespace Chino
             _enumValue = enumValue;
         }
 
+        public static FilterOperator filter(FilterOperatorEnum o)
+        {
+            return new FilterOperator(o);
+        }
+
         public string toJSON()
         {
             switch (_enumValue)
@@ -101,6 +106,11 @@ namespace Chino
             _enumValue = enumValue;
         }
 
+        public static ResultType of(ResultTypeEnum t)
+        {
+            return new ResultType(t);
+        }
+
         public override string ToString()
         {
             return _enumValue.ToString().ToLower();
@@ -118,10 +128,10 @@ namespace Chino
     public enum OrderEnum
     {
         /* ascending order */
-        ASC,
+        Asc,
 
         /* descending order */
-        DESC
+        Desc
     }
 
     public class Order
@@ -131,6 +141,11 @@ namespace Chino
         public Order(OrderEnum enumValue)
         {
             _enumValue = enumValue;
+        }
+
+        public static Order of(OrderEnum o)
+        {
+            return new Order(o);
         }
 
         public string toString()
@@ -162,7 +177,7 @@ namespace Chino
                 .Append("\"field\": ").Append("\"").Append(fieldName).Append("\",\n");
             indent(sb, indentLevel)
                 .Append("\t")
-                .Append("\"order\": ").Append("\"").Append(order.ToString()).Append("\"\n");
+                .Append("\"order\": ").Append("\"").Append(order).Append("\"\n");
             indent(sb, indentLevel)
                 .Append("}");
 
@@ -190,12 +205,10 @@ namespace Chino
         protected readonly RestClient _client; // use new Request(..., POST) to POST
         protected string ResourceId;
 
-//    protected static readonly ObjectMapper mapper = new ObjectMapper(); // use ((Newtonsoft.Json.Linq.***)<<OBJECT>>.ToObject<***>()
-
         protected AbstractSearchClient(RestClient client, string resourceID)
         {
             _client = client;
-            this.ResourceId = resourceID;
+            ResourceId = resourceID;
         }
 
         public AbstractSearchClient<TResponseType> setQuery(ISearchTreeNode query)
@@ -204,13 +217,13 @@ namespace Chino
             return this;
         }
 
-        protected AbstractSearchClient<TResponseType> setResultType(ResultType resultType)
+        public AbstractSearchClient<TResponseType> setResultType(ResultType resultType)
         {
             this.resultType = resultType;
             return null;
         }
 
-        protected AbstractSearchClient<TResponseType> addSortRule(string fieldName, Order order)
+        public AbstractSearchClient<TResponseType> addSortRule(string fieldName, Order order)
         {
             if (sort == null)
             {
@@ -223,7 +236,7 @@ namespace Chino
             return null;
         }
 
-        protected AbstractSearchClient<TResponseType> addSortRule(string fieldName, Order order, int index)
+        public AbstractSearchClient<TResponseType> addSortRule(string fieldName, Order order, int index)
         {
             if (sort == null)
             {
@@ -284,7 +297,7 @@ namespace Chino
             return new SearchQueryBuilder<TResponseType>(arraySearchLeaf, this);
         }
 
-        private static ArraySearchLeaf<TArrayType> getArraySearchLeaf<TArrayType>(string fieldName, FilterOperator type,
+        internal static ArraySearchLeaf<TArrayType> getArraySearchLeaf<TArrayType>(string fieldName, FilterOperator type,
             List<TArrayType> value)
         {
             if (value.Count == 0)
@@ -541,7 +554,7 @@ namespace Chino
 
         public override bool Equals(object obj)
         {
-            if (this == obj || this.Equals(obj))
+            if (this == obj || Equals(obj))
                 return true;
             if (!(obj is SearchCondition))
                 return false;
@@ -717,6 +730,179 @@ namespace Chino
         public void setClient(AbstractSearchClient<TClientResponseType> searchClient)
         {
             queryExecutor = searchClient;
+        }
+
+        public AbstractSearchClient<TClientResponseType> buildSearch() {
+            return queryExecutor.setQuery(treeTop);
+        }
+        
+        public SearchQueryBuilder<TClientResponseType> and(SearchQueryBuilder<TClientResponseType> query) {
+            if (treeTop is SearchCondition.And and1) {
+                and1.addChild(query.treeTop);
+                return this;
+            }
+
+            if (query.treeTop is SearchCondition.And and2) {
+                and2.addChild(treeTop);
+                query.queryExecutor = queryExecutor;
+                return query;
+            }
+
+            return new SearchQueryBuilder<TClientResponseType>(
+                treeTop,
+                new SearchCondition.And(),
+                query.treeTop,
+                queryExecutor
+            );
+        }
+
+        public SearchQueryBuilder<TClientResponseType> and(string fieldName, FilterOperator type, int value) {
+            return and(
+                with(fieldName, type, value)
+            );
+        }
+
+        public SearchQueryBuilder<TClientResponseType> and(string fieldName, FilterOperator type, float value) {
+            return and(
+                with(fieldName, type, value)
+            );
+        }
+
+        public SearchQueryBuilder<TClientResponseType> and(string fieldName, FilterOperator type, bool value) {
+            return and(
+                with(fieldName, type, value)
+            );
+        }
+
+        public SearchQueryBuilder<TClientResponseType> and(string fieldName, FilterOperator type, string value) {
+            return and(
+                with(fieldName, type, value)
+            );
+        }
+
+        public SearchQueryBuilder<TClientResponseType> and(string fieldName, FilterOperator type, List<object> value) {
+            return and(
+                with(fieldName, type, value)
+            );
+        }
+
+        public SearchQueryBuilder<TClientResponseType> or(SearchQueryBuilder<TClientResponseType> query) {
+            if (treeTop is SearchCondition.Or or1) {
+                or1.addChild(query.treeTop);
+                return this;
+            }
+
+            if (query.treeTop is SearchCondition.Or or2) {
+                or2.addChild(treeTop);
+                query.queryExecutor = queryExecutor;
+                return query;
+            }
+
+            return new SearchQueryBuilder<TClientResponseType>(
+                treeTop,
+                new SearchCondition.Or(),
+                query.treeTop,
+                queryExecutor
+            );
+        }
+
+        public SearchQueryBuilder<TClientResponseType> or(string fieldName, FilterOperator type, int value) {
+            return or(
+                with(fieldName, type, value)
+            );
+        }
+
+        public SearchQueryBuilder<TClientResponseType> or(string fieldName, FilterOperator type, float value) {
+            return or(
+                with(fieldName, type, value)
+            );
+        }
+
+        public SearchQueryBuilder<TClientResponseType> or(string fieldName, FilterOperator type, bool value) {
+            return or(
+                with(fieldName, type, value)
+            );
+        }
+
+        public SearchQueryBuilder<TClientResponseType> or(string fieldName, FilterOperator type, string value) {
+            return or(
+                with(fieldName, type, value)
+            );
+        }
+
+        public SearchQueryBuilder<TClientResponseType> or<TListItem>(string fieldName, FilterOperator type, List<TListItem> value) {
+            return or(
+                with(fieldName, type, value)
+            );
+        }
+
+        public static SearchQueryBuilder<TClientResponseType> not(SearchQueryBuilder<TClientResponseType> query) {
+            if (query.treeTop is SearchCondition.Not not) {
+                return new SearchQueryBuilder<TClientResponseType>(
+                    not.getChild(),
+                    query.queryExecutor
+                );
+            }
+
+            return new SearchQueryBuilder<TClientResponseType>(
+                new SearchCondition.Not(query.treeTop),
+                query.queryExecutor
+            );
+        }
+
+        public static SearchQueryBuilder<TClientResponseType> not(string fieldName, FilterOperator type, int value) {
+            return not(
+                with(fieldName, type, value)
+            );
+        }
+
+        public static SearchQueryBuilder<TClientResponseType> not(string fieldName, FilterOperator type, float value) {
+            return not(
+                with(fieldName, type, value)
+            );
+        }
+
+        public static SearchQueryBuilder<TClientResponseType> not(string fieldName, FilterOperator type, bool value) {
+            return not(
+                with(fieldName, type, value)
+            );
+        }
+
+        public static SearchQueryBuilder<TClientResponseType> not(string fieldName, FilterOperator type, string value) {
+            return not(
+                with(fieldName, type, value)
+            );
+        }
+
+        public static SearchQueryBuilder<TClientResponseType> not<TListItem>(string fieldName, FilterOperator type, List<TListItem> value) {
+            return not(
+                with(fieldName, type, value)
+            );
+        }
+
+        public static SearchQueryBuilder<TClientResponseType> with(SearchQueryBuilder<TClientResponseType> query) {
+            return query;
+        }
+
+        public static SearchQueryBuilder<TClientResponseType> with(string fieldName, FilterOperator type, int value) {
+            return new SearchQueryBuilder<TClientResponseType>(new IntegerSearchLeaf(fieldName, type, value), null);
+        }
+
+        public static SearchQueryBuilder<TClientResponseType> with(string fieldName, FilterOperator type, float value) {
+            return new SearchQueryBuilder<TClientResponseType>(new FloatSearchLeaf(fieldName, type, value), null);
+        }
+
+        public static SearchQueryBuilder<TClientResponseType> with(string fieldName, FilterOperator type, bool value) {
+            return new SearchQueryBuilder<TClientResponseType>(new BoolSearchLeaf(fieldName, type, value), null);
+        }
+
+        public static SearchQueryBuilder<TClientResponseType> with(string fieldName, FilterOperator type, string value) {
+            return new SearchQueryBuilder<TClientResponseType>(new StringSearchLeaf(fieldName, type, value), null);
+        }
+
+        public static SearchQueryBuilder<TClientResponseType> with<TListItem>(string fieldName, FilterOperator type, List<TListItem> value) {
+            var arraySearchLeaf = AbstractSearchClient<TListItem>.getArraySearchLeaf(fieldName, type, value);
+            return new SearchQueryBuilder<TClientResponseType>(arraySearchLeaf, null);
         }
     }
 }
