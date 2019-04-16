@@ -20,8 +20,6 @@ namespace Chino
             set => this.value = value;
         }
 
-        private bool supportListOperators = false;
-
         protected SearchLeaf (string field, FilterOperator type, TValueType value) {
             this.field = field;
             this.type = type;
@@ -53,7 +51,10 @@ namespace Chino
 
         public virtual string parseJson(int indentLevel)
         {
-            return "{}";
+            var indent = "";
+            for (var i = 0; i < indentLevel; i++)
+                indent += "/t";
+            return indent + "{}";
         }
 
         protected string parseJSONWithValue(string valueString, int indentLevel) {
@@ -124,10 +125,10 @@ namespace Chino
 
         public override string parseJson(int indentLevel) 
         {
-            StringBuilder valuesString = new StringBuilder("[");
+            var valuesString = new StringBuilder("[");
             
-            IEnumerator<T> it = value.OfType<T>().GetEnumerator();
-            bool hasNext = it.MoveNext();
+            var it = value.OfType<T>().GetEnumerator();
+            var hasNext = it.MoveNext();
             while (hasNext) {
                 valuesString.Append(
                     getValueStringEncoding(
@@ -139,6 +140,7 @@ namespace Chino
                     valuesString.Append(",");
                 }
             }
+            it.Dispose();
 
             return parseJSONWithValue(valuesString.Append("]").ToString(), indentLevel);
         }
@@ -148,9 +150,9 @@ namespace Chino
                 return base.getString();
             }
 
-            StringBuilder sb = new StringBuilder("{");
+            var sb = new StringBuilder("{");
             sb.Append(field).Append(" ")
-                .Append(type.ToString()).Append(" ")
+                .Append(type).Append(" ")
                 .Append("[");
 
             // parse list elements
@@ -170,33 +172,18 @@ namespace Chino
             if (element == null)
                 return "null";
             
-            if (IsNumber(element))
+            if (AbstractSearchClient<object>.IsNumber(element))
                 return "" + element;
             
             if (element is string)
                 return "\"" + element + "\"";
 
-            if (bool.TryParse(element.ToString(), out var result)){
+            if (bool.TryParse(element.ToString(), out var result)) {
                 Console.WriteLine($"{element} -> {result}");
                 return result ? "true" : "false";
             }
             
             return element.ToString();
-        }
-
-        private static bool IsNumber(object value)
-        {
-            return value is decimal
-//                   || value is byte
-//                   || value is sbyte
-                   || value is short
-                   || value is ushort
-                   || value is int
-                   || value is uint
-                   || value is long
-                   || value is ulong
-                   || value is float
-                   || value is double;
         }
     }
 }
