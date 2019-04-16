@@ -3,14 +3,14 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Text;
+using Newtonsoft.Json.Linq;
 using RestSharp;
 
 namespace Chino
 {
     public static class Constants
     {
-        public static readonly int SearchResultsDefaultLimit = 10;
-
+        public const int SearchResultsDefaultLimit = 10;
     }
 
     public enum FilterOperatorEnum
@@ -187,15 +187,15 @@ namespace Chino
         private ISearchTreeNode query;
         private LinkedList<SortRule> sort;
 
-        private readonly RestClient _client; // use new Request(..., POST) to POST
-        protected string resourceID;
+        protected readonly RestClient _client; // use new Request(..., POST) to POST
+        protected string ResourceId;
 
 //    protected static readonly ObjectMapper mapper = new ObjectMapper(); // use ((Newtonsoft.Json.Linq.***)<<OBJECT>>.ToObject<***>()
 
         protected AbstractSearchClient(RestClient client, string resourceID)
         {
             _client = client;
-            this.resourceID = resourceID;
+            this.ResourceId = resourceID;
         }
 
         public AbstractSearchClient<TResponseType> setQuery(ISearchTreeNode query)
@@ -373,6 +373,46 @@ namespace Chino
                    || value is double;
         }
 
+    }
+
+    public class DocumentsSearch : AbstractSearchClient<GetDocumentsResponse> {
+        public DocumentsSearch(RestClient client, string resourceId) : base(client, resourceId) { }
+        public override GetDocumentsResponse execute(int offset, int limit)
+        {
+            var jsonQuery = parseSearchRequest();
+            var searchRequest = new RestRequest($"/search/documents/{ResourceId}", Method.POST, DataFormat.Json);
+            searchRequest.AddJsonBody(jsonQuery);
+            var response = _client.Execute(searchRequest);
+            
+            if (response.ErrorException != null)
+            {
+                throw new ChinoApiException(response.ErrorMessage);
+            }
+            var o = JObject.Parse(response.Content);
+            if ((int) o["result_code"] != 200) 
+                throw new ChinoApiException((string) o["message"]);
+            return ((JObject)o["data"]).ToObject<GetDocumentsResponse>();
+        }
+    }
+
+    public class UsersSearch : AbstractSearchClient<GetUsersResponse> {
+        public UsersSearch(RestClient client, string resourceId) : base(client, resourceId) { }
+        public override GetUsersResponse execute(int offset, int limit)
+        {
+            var jsonQuery = parseSearchRequest();
+            var searchRequest = new RestRequest($"/search/users/{ResourceId}", Method.POST, DataFormat.Json);
+            searchRequest.AddJsonBody(jsonQuery);
+            var response = _client.Execute(searchRequest);
+            
+            if (response.ErrorException != null)
+            {
+                throw new ChinoApiException(response.ErrorMessage);
+            }
+            var o = JObject.Parse(response.Content);
+            if ((int) o["result_code"] != 200) 
+                throw new ChinoApiException((string) o["message"]);
+            return ((JObject)o["data"]).ToObject<GetUsersResponse>();
+        }
     }
 
     public abstract class SearchCondition : ISearchTreeNode
@@ -677,22 +717,6 @@ namespace Chino
         public void setClient(AbstractSearchClient<TClientResponseType> searchClient)
         {
             queryExecutor = searchClient;
-        }
-    }
-
-    public class DocumentsSearch : AbstractSearchClient<GetDocumentsResponse> {
-        public DocumentsSearch(RestClient client, string resourceId) : base(client, resourceId) { }
-        public override GetDocumentsResponse execute(int offset, int limit)
-        {
-            throw new NotImplementedException();
-        }
-    }
-
-    public class UsersSearch : AbstractSearchClient<GetUsersResponse> {
-        public UsersSearch(RestClient client, string resourceId) : base(client, resourceId) { }
-        public override GetUsersResponse execute(int offset, int limit)
-        {
-            throw new NotImplementedException();
         }
     }
 }
