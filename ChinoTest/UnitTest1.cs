@@ -1,20 +1,15 @@
 ﻿using System;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
-using Chino;
 using System.Collections.Generic;
 using System.IO;
-using System.Diagnostics;
 using System.Threading;
+using Chino;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace ChinoTest
 {
     [TestClass]
     public class TrivialTest
     {
-        private const String FileName = "003.pdf";
-        private const String Path = "Resources/attachments";
-        private const String Destination = "Resources/attachments/temp";
-        
         private String _userSchemaId1 = "";
         private String _userSchemaId2 = "";
         private String _userSchemaId3 = "";
@@ -27,33 +22,25 @@ namespace ChinoTest
         private String _repositoryId = "";
         private String _groupId = "";
         
-        private static String _customerId;
-        private static String _customerKey;
-        private static String _hostUrl;
-
-        [AssemblyInitialize]
-        public static void beforeAll(TestContext ctx)
-        {
-            _customerId = Environment.GetEnvironmentVariable("customer_id");
-            _customerKey= Environment.GetEnvironmentVariable("customer_key");
-            _hostUrl = Environment.GetEnvironmentVariable("host") ?? "https://api.test.chino.io/v1";
-            
-            
-        }
-        
         [TestInitialize]
         public void Startup()
         {
-            Console.WriteLine($"HOST: {_hostUrl}");
-            Console.WriteLine($"ID  : ********{_customerId.Substring(_customerId.Length - 5)}");
-            Console.WriteLine($"KEY : ********{_customerKey.Substring(_customerKey.Length - 5)}");
+            Const.init();
+            
+            Console.WriteLine($"HOST: {Const._hostUrl}");
+            Console.WriteLine($"ID  : ********{Const._customerId.Substring(Const._customerId.Length - 5)}");
+            Console.WriteLine($"KEY : ********{Const._customerKey.Substring(Const._customerKey.Length - 5)}");
+
+            var chino = new ChinoAPI(Const._hostUrl, Const._customerId, Const._customerKey);
+            Console.WriteLine("Cleanin' up test environment...");
+            Const.deleteAll(chino);
         }
 
 
         [TestMethod]
         public void testRepositories()
         {
-            ChinoAPI chino = new ChinoAPI(_hostUrl, _customerId, _customerKey);
+            ChinoAPI chino = new ChinoAPI(Const._hostUrl, Const._customerId, Const._customerKey);
             GetRepositoriesResponse repos = chino.repositories.list(0);
             foreach (Repository r in repos.repositories)
             {
@@ -71,7 +58,7 @@ namespace ChinoTest
         [TestMethod]
         public void testApplications()
         {
-            ChinoAPI chino = new ChinoAPI(_hostUrl, _customerId, _customerKey);
+            ChinoAPI chino = new ChinoAPI(Const._hostUrl, Const._customerId, Const._customerKey);
             
             // password - confidential
             Application app = chino.applications.create("app_pswd_sdk_dotnet", "password");
@@ -110,7 +97,7 @@ namespace ChinoTest
         [TestMethod]
         public void testSchemas()
         {
-            ChinoAPI chino = new ChinoAPI(_hostUrl, _customerId, _customerKey);
+            ChinoAPI chino = new ChinoAPI(Const._hostUrl, Const._customerId, Const._customerKey);
             GetRepositoriesResponse repos = chino.repositories.list(0);
             foreach (Repository r in repos.repositories)
             {
@@ -155,7 +142,7 @@ namespace ChinoTest
         [TestMethod]
         public void testUserSchemas()
         {
-            ChinoAPI chino = new ChinoAPI(_hostUrl, _customerId, _customerKey);
+            ChinoAPI chino = new ChinoAPI(Const._hostUrl, Const._customerId, Const._customerKey);
             GetUserSchemasResponse userschemas = chino.userSchemas.list(0);
             foreach (UserSchema u in userschemas.user_schemas)
             {
@@ -198,7 +185,7 @@ namespace ChinoTest
         [TestMethod]
         public void testUsers()
         {
-            ChinoAPI chino = new ChinoAPI(_hostUrl, _customerId, _customerKey);
+            ChinoAPI chino = new ChinoAPI(Const._hostUrl, Const._customerId, Const._customerKey);
             GetUserSchemasResponse userschemas = chino.userSchemas.list(0);
             foreach (UserSchema u in userschemas.user_schemas)
             {
@@ -230,10 +217,10 @@ namespace ChinoTest
             Application app = chino.applications.create("application_sdk_dotnet", "password", "");
             LoggedUser loggedUser = chino.auth.loginUserWithPassword("Giovanni", "password", app.app_id, app.app_secret);
             Console.WriteLine(loggedUser.ToStringExtension());
-            chino.initClient(_hostUrl, loggedUser.access_token);
+            chino.initClient(Const._hostUrl, loggedUser.access_token);
             Console.WriteLine(chino.auth.checkUserStatus().ToStringExtension());
             Console.WriteLine(chino.auth.logoutUser(loggedUser.access_token, app.app_id, app.app_secret));
-            chino.initClient(_hostUrl, _customerId, _customerKey);
+            chino.initClient(Const._hostUrl, Const._customerId, Const._customerKey);
             //LoggedUser loggedUser = chino.auth.loginUser("Giovanni", "password", customerId);
             //When you have logged the user and you have the token you need to init the client passing the token in the function
             //chino.initClient(hostUrl, loggedUser.access_token);
@@ -246,7 +233,7 @@ namespace ChinoTest
         [TestMethod]
         public void testDocuments()
         {
-            ChinoAPI chino = new ChinoAPI(_hostUrl, _customerId, _customerKey);
+            ChinoAPI chino = new ChinoAPI(Const._hostUrl, Const._customerId, Const._customerKey);
             GetRepositoriesResponse repos = chino.repositories.list(0);
             foreach (Repository r in repos.repositories)
             {
@@ -283,7 +270,7 @@ namespace ChinoTest
         [TestMethod]
         public void testCollections()
         {
-            ChinoAPI chino = new ChinoAPI(_hostUrl, _customerId, _customerKey);
+            ChinoAPI chino = new ChinoAPI(Const._hostUrl, Const._customerId, Const._customerKey);
             GetRepositoriesResponse repos = chino.repositories.list(0);
             foreach (Repository r in repos.repositories)
             {
@@ -326,7 +313,7 @@ namespace ChinoTest
         [TestMethod]
         public void testGroups()
         {
-            ChinoAPI chino = new ChinoAPI(_hostUrl, _customerId, _customerKey);
+            ChinoAPI chino = new ChinoAPI(Const._hostUrl, Const._customerId, Const._customerKey);
             GetUserSchemasResponse userschemas = chino.userSchemas.list(0);
             foreach (UserSchema u in userschemas.user_schemas)
             {
@@ -364,10 +351,10 @@ namespace ChinoTest
         }
 
         [TestMethod]
-        public void testSearch()
+        public void testSearchOld()
         {
-            ChinoAPI chino = new ChinoAPI(_hostUrl, _customerId, _customerKey);
-            deleteAll(chino);
+            ChinoAPI chino = new ChinoAPI(Const._hostUrl, Const._customerId, Const._customerKey);
+            Const.deleteAll(chino);
             Repository repo = chino.repositories.create("test_repo_description");
             _repositoryId = repo.repository_id;
             SchemaRequest schemaRequest = new SchemaRequest();
@@ -395,7 +382,7 @@ namespace ChinoTest
             UserSchema userSchema = chino.userSchemas.create(userSchemaRequest);
 
             Dictionary<String, Object> attributes = new Dictionary<string, object>();
-            attributes.Add("name", "Giacobino");
+            attributes.Add("name", "Giacomino");
             attributes.Add("last_name", "Poretti");
 
             chino.users.create("jack@gmail.com", "password", attributes, userSchema.user_schema_id);
@@ -431,13 +418,17 @@ namespace ChinoTest
             searchRequest.filter = filter;
             Console.WriteLine("ONLY_ID");
             Console.WriteLine(chino.search.searchDocuments(_schemaId1, searchRequest).ToStringExtension());
+            
             filter.Add(new FilterOption("test_boolean", "eq", true));
             Console.WriteLine(chino.search.searchDocuments(_schemaId1, "FULL_CONTENT", true, "or", sort, filter).ToStringExtension());
+            
             GetDocumentsResponse documents = chino.search.where("test_integer").gt(123).and("test_date").eq("1997-12-04").sortAscBy("test_string").searchDocuments(_schemaId1);
+            
             Console.WriteLine("Test search method with functions:");
             Console.WriteLine(documents.ToStringExtension());
             GetUsersResponse users = chino.search.where("name").eq("Giacobino").sortAscBy("name").resultType("EXISTS").searchUsers(userSchema.user_schema_id);
             Console.WriteLine(users.ToStringExtension());
+            
             users = chino.search.where("username").eq("jack@gmail.com").sortAscBy("name").resultType("USERNAME_EXISTS").searchUsers(userSchema.user_schema_id);
             Console.WriteLine(users.ToStringExtension());
         }
@@ -449,9 +440,9 @@ namespace ChinoTest
             
             Console.WriteLine("Test setup");
             
-            ChinoAPI chinoAdmin = new ChinoAPI(_hostUrl, _customerId, _customerKey);
-            deleteAll(chinoAdmin);
-            ChinoAPI chino = new ChinoAPI(_hostUrl);
+            ChinoAPI chinoAdmin = new ChinoAPI(Const._hostUrl, Const._customerId, Const._customerKey);
+            Const.deleteAll(chinoAdmin);
+            ChinoAPI chino = new ChinoAPI(Const._hostUrl);
 
             Repository repo = chinoAdmin.repositories.create("test_repo_description");
             _repositoryId = repo.repository_id;
@@ -491,7 +482,7 @@ namespace ChinoTest
             Console.WriteLine(chinoAdmin.permissions.permissionsOnResourceChildren(PermissionValues.GRANT, PermissionValues.SCHEMAS, _schemaId1, PermissionValues.DOCUMENTS, PermissionValues.USERS, _userId, permissionRuleCreatedDocument));
             
             LoggedUser loggedUser = chino.auth.loginUserWithPassword("Giovanni", "password", app.app_id, app.app_secret);
-            chino.initClient(_hostUrl, loggedUser.access_token);
+            chino.initClient(Const._hostUrl, loggedUser.access_token);
             
             Dictionary<String, Object> content = new Dictionary<string, object>();
             content.Add("test_integer", 123);
@@ -514,7 +505,7 @@ namespace ChinoTest
             
             chino.auth.logoutUser(loggedUser.access_token, app.app_id, app.app_secret);
             
-            chino.initClient(_hostUrl, _customerId, _customerKey);
+            chino.initClient(Const._hostUrl, Const._customerId, Const._customerKey);
             attributes = new Dictionary<string, object>();
             attributes.Add("test_attribute_1", "test_value");
             attributes.Add("test_attribute_2", 123);
@@ -536,7 +527,7 @@ namespace ChinoTest
         [TestMethod]
         public void testBlobs()
         {
-            ChinoAPI chino = new ChinoAPI(_hostUrl, _customerId, _customerKey);
+            ChinoAPI chino = new ChinoAPI(Const._hostUrl, Const._customerId, Const._customerKey);
             GetRepositoriesResponse repos = chino.repositories.list(0);
             foreach (Repository r in repos.repositories)
             {
@@ -554,9 +545,9 @@ namespace ChinoTest
             Document document = chino.documents.create(content, _schemaId1);
             _documentId = document.document_id;
             //The file to upload is located in ChinoTest/bin/Debug/attachments
-            CommitBlobUploadResponse commitBlobUploadResponse = chino.blobs.uploadBlob(Path, _documentId, "test_file", FileName);
+            CommitBlobUploadResponse commitBlobUploadResponse = chino.blobs.uploadBlob(Const.Path, _documentId, "test_file", Const.FileName);
             Console.WriteLine(commitBlobUploadResponse.ToStringExtension());
-            GetBlobResponse blobResponse = chino.blobs.get(commitBlobUploadResponse.blob.blob_id, Destination);
+            GetBlobResponse blobResponse = chino.blobs.get(commitBlobUploadResponse.blob.blob_id, Const.Destination);
             Console.WriteLine(blobResponse.ToStringExtension());
             Console.WriteLine(chino.blobs.delete(commitBlobUploadResponse.blob.blob_id, true));
         }
@@ -566,50 +557,11 @@ namespace ChinoTest
             "Expected exception: ChinoApiException")]
         public void testException()
         {
-            var chino = new ChinoAPI(_hostUrl, "Invalid-ID", "Invalid-Key");
+            var chino = new ChinoAPI(Const._hostUrl, "Invalid-ID", "Invalid-Key");
             
             // should raise ChinoApiException, 401
             chino.repositories.list(0);
         }
-
-        public void deleteAll(ChinoAPI chino)
-        {
-            List<Repository> repos = chino.repositories.list(0).repositories;
-            foreach (Repository r in repos) {
-                List<Schema> schemas = chino.schemas.list(r.repository_id, 0).schemas;
-                foreach (Schema s in schemas)
-                {
-                    List<Document> documents = chino.documents.list(s.schema_id, 0).documents;
-                    foreach (Document d in documents)
-                    {
-                        Console.WriteLine(chino.documents.delete(d.document_id, true));
-                    }
-                    Console.WriteLine(chino.schemas.delete(s.schema_id, true));
-                }
-                Console.WriteLine(chino.repositories.delete(r.repository_id, true));
-            }
-            List<UserSchema> userSchemas = chino.userSchemas.list(0).user_schemas;
-            foreach (UserSchema u in userSchemas)
-            {
-                List<User> users = chino.users.list(u.user_schema_id, 0).users;
-                foreach (User us in users)
-                {
-                    Console.WriteLine(chino.users.delete(us.user_id, true));
-                }
-                Console.WriteLine(chino.userSchemas.delete(u.user_schema_id, true));
-            }
-            List<Collection> collections = chino.collections.list(0).collections;
-            foreach (Collection c in collections)
-            {
-                Console.WriteLine(chino.collections.delete(c.collection_id, true));
-            }
-            List<Group> groups = chino.groups.list(0).groups;
-            foreach (Group g in groups)
-            {
-                Console.WriteLine(chino.groups.delete(g.group_id, true));
-            }
-        } 
-
     }
 
     public class SchemaStructureSample{

@@ -2,6 +2,12 @@
 
 ### v`0.1` (Current)
 
+#### alpha.3 | apr 17th 2019
+
+Marked old Search API as `Obsolete` with a warning shown on compilation.
+
+Added new Search API
+
 #### alpha.2 | mar 3rd 2019
 
 Added ChinoApiException and fixed project structure
@@ -10,7 +16,7 @@ Added test resources for BLOBs test
 
 Fixed test suite
 
-#### alpha | feb 2019
+#### alpha | feb 28th 2019
 
 ***Note: This is a Pre-release.***
  
