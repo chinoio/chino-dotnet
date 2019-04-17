@@ -99,7 +99,7 @@ namespace ChinoTest {
                     Console.WriteLine(chino.groups.delete(g.group_id, true));
                 }
                 groups_offset += groups.Count;
-                groups = chino.groups.list(0).groups;
+                groups = chino.groups.list(groups_offset).groups;
             }
         }
     }
