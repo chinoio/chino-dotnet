@@ -22,15 +22,17 @@ namespace ChinoTest
         [TestInitialize]
         public void startup()
         {
+            Const.init();
+            
             Console.WriteLine($"HOST: {Const._hostUrl}");
             Console.WriteLine($"ID  : ********{Const._customerId.Substring(Const._customerId.Length - 5)}");
             Console.WriteLine($"KEY : ********{Const._customerKey.Substring(Const._customerKey.Length - 5)}");
-            Console.WriteLine("Creating test objects...");
 
             chino = new ChinoAPI(Const._hostUrl, Const._customerId, Const._customerKey);
             Console.WriteLine("Cleanin' up test environment...");
             Const.deleteAll(chino);
-            
+
+            Console.WriteLine("Creating test objects...");
             Repository repo = chino.repositories.create("test_repo_description");
             _repositoryId = repo.repository_id;
             SchemaRequest schemaRequest = new SchemaRequest {description = "schema_dotnet_sdk"};
@@ -133,7 +135,65 @@ namespace ChinoTest
             Assert.AreNotEqual(null, search1.ToString());
 
             var users1 = search1.execute().users;
+            
+            Assert.AreEqual(
+                2,
+                users1.Count,
+                "Search returned wrong count"
+            );
             Assert.AreEqual(2, users1.Count);
+            
+            
+            var search2 = chino.search.users(_userSchemaId)
+                .setResultType(ResultTypeEnum.Full_Content)
+                .addSortRule("last_name", Desc)
+                .with("last_name", FilterOperator.filter(FilterOperatorEnum.Like), "*i")
+                .and(
+                    SearchQueryBuilder<GetUsersResponse>.not("name", FilterOperator.filter(FilterOperatorEnum.In), invalidNames)
+                ).buildSearch();
+            var users2 = search2.execute().users;
+
+            for (var i = 0; i < users1.Count; i++)
+            {
+                Assert.AreEqual(users1[i].user_id, users2[i].user_id);
+            }
+            
+            
+            var search3 = chino.search.users(_userSchemaId)
+                .setResultType(ResultTypeEnum.Full_Content)
+                .addSortRule("last_name", Desc)
+                .with("last_name", FilterOperator.filter(FilterOperatorEnum.Like), "*i")
+                .orNot("name", FilterOperator.filter(FilterOperatorEnum.Equals), "Andrea")
+                .buildSearch();
+            var users3 = search3.execute().users;
+            
+            Assert.AreEqual(
+                2,
+                users3.Count,
+                "Search returned wrong count"
+            );
+            Assert.AreEqual(2, users3.Count);
+            
+            
+            var search4 = chino.search.users(_userSchemaId)
+                .setResultType(ResultTypeEnum.Full_Content)
+                .addSortRule("last_name", Desc)
+                .with("last_name", FilterOperator.filter(FilterOperatorEnum.Like), "*i")
+                .or(
+                    SearchQueryBuilder<GetUsersResponse>.not("name", FilterOperator.filter(FilterOperatorEnum.Equals), "Andrea")
+                ).buildSearch();
+            var users4 = search4.execute().users;
+            
+            Assert.AreEqual(
+                2,
+                users4.Count,
+                "Search returned wrong count"
+            );
+
+            for (var i = 0; i < users3.Count; i++)
+            {
+                Assert.AreEqual(users3[i].user_id, users4[i].user_id);
+            }
         }
 
         [TestMethod]
@@ -152,7 +212,7 @@ namespace ChinoTest
         [TestCleanup]
         public void cleanUp()
         {
-            Console.Write("Cleaning test environment...");
+            Console.Write("Cleanin' up test environment after tests...");
             Const.deleteAll(chino);
             Console.WriteLine(" Done.");
         }

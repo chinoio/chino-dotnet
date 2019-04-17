@@ -306,7 +306,7 @@ namespace Chino
             object element = value[0];
             if (!(IsNumber(element) || element is bool || element is string))
                 throw new NotSupportedException(
-                    $"Unsupported element in list of type '{element.GetType()}'. " +
+                    $"Unsupported element in list of type '{ element.GetType() }'. " +
                     "Supported types are: decimal, short, ushort, int, uint, long, ulong, float, double"
                 );
 
@@ -337,16 +337,16 @@ namespace Chino
             if (sort != null && sort.Count != 0)
             {
                 sb.Append("\t").Append("\"sort\": ").Append("[\n");
-                IEnumerator<SortRule> en = sort.GetEnumerator();
-                var hasNext = en.MoveNext();
+                IEnumerator<SortRule> sortRules = sort.GetEnumerator();
+                var hasNext = sortRules.MoveNext();
                 while (hasNext)
                 {
-                    if (en.Current != null)
+                    if (sortRules.Current != null)
                     {
-                        sb.Append(en.Current.toJSONString(2));
+                        sb.Append(sortRules.Current.toJSONString(2));
                     }
 
-                    hasNext = en.MoveNext(); // check if the array is finished
+                    hasNext = sortRules.MoveNext(); // check if the array is finished
                     if (hasNext)
                     {
                         sb.Append(",");
@@ -354,7 +354,7 @@ namespace Chino
 
                     sb.Append("\n");
                 }
-                en.Dispose();
+                sortRules.Dispose();
 
                 sb.Append("\t").Append("],\n");
             }
@@ -364,12 +364,7 @@ namespace Chino
             return sb.Append("}\n").ToString();
         }
 
-        public abstract TResponseType execute(int offset, int limit);
-
-        public TResponseType execute()
-        {
-            return execute(0, Constants.SearchResultsDefaultLimit);
-        }
+        public abstract TResponseType execute(int offset = 0, int limit = Constants.SearchResultsDefaultLimit);
 
         public static bool IsNumber(object value)
         {
@@ -397,8 +392,9 @@ namespace Chino
             searchRequest.AddJsonBody(jsonQuery);
             var response = _client.Execute(searchRequest);
             
-            Console.WriteLine($"QUERY:\n { jsonQuery }");
-            Console.WriteLine($"RESPONSE:\n { response.Content }");
+//            // Show  
+//            Console.WriteLine($"QUERY:\n { jsonQuery }");
+//            Console.WriteLine($"RESPONSE:\n { response.Content }");
             
             if (response.ErrorException != null)
             {
@@ -720,7 +716,8 @@ namespace Chino
         public SearchQueryBuilder (ISearchTreeNode rootNode, AbstractSearchClient<TClientResponseType> client)
         {
             treeTop = rootNode;
-            queryExecutor = client.setQuery(rootNode);
+            if (client != null)
+                queryExecutor = client.setQuery(rootNode);
         }
 
         protected SearchQueryBuilder(ISearchTreeNode query1, SearchCondition cond, ISearchTreeNode query2, AbstractSearchClient<TClientResponseType> client) {
@@ -740,12 +737,14 @@ namespace Chino
         }
         
         public SearchQueryBuilder<TClientResponseType> and(SearchQueryBuilder<TClientResponseType> query) {
-            if (treeTop is SearchCondition.And and1) {
+            if (treeTop is SearchCondition.And and1) 
+            {
                 and1.addChild(query.treeTop);
                 return this;
             }
 
-            if (query.treeTop is SearchCondition.And and2) {
+            if (query.treeTop is SearchCondition.And and2)
+            {
                 and2.addChild(treeTop);
                 query.queryExecutor = queryExecutor;
                 return query;
@@ -759,7 +758,8 @@ namespace Chino
             );
         }
 
-        public SearchQueryBuilder<TClientResponseType> and(string fieldName, FilterOperator type, int value) {
+        public SearchQueryBuilder<TClientResponseType> and(string fieldName, FilterOperator type, int value) 
+        {
             return and(
                 with(fieldName, type, value)
             );
@@ -791,30 +791,53 @@ namespace Chino
         
         public SearchQueryBuilder<TClientResponseType> andNot(SearchQueryBuilder<TClientResponseType> query)
         {
-            return not(and(query));
+            return and(not(query));
         }
 
         public SearchQueryBuilder<TClientResponseType> andNot(string fieldName, FilterOperator type, int value) {
-            return not(and(fieldName, type, value));
+            return and(not(fieldName, type, value));
         }
 
         public SearchQueryBuilder<TClientResponseType> andNot(string fieldName, FilterOperator type, float value) {
-            return not(and(fieldName, type, value));
+            return and(not(fieldName, type, value));
         }
 
         public SearchQueryBuilder<TClientResponseType> andNot(string fieldName, FilterOperator type, bool value) {
-            return not(and(fieldName, type, value));
+            return and(not(fieldName, type, value));
         }
 
         public SearchQueryBuilder<TClientResponseType> andNot(string fieldName, FilterOperator type, string value) {
-            return not(and(fieldName, type, value));
+            return and(not(fieldName, type, value));
         }
 
         public SearchQueryBuilder<TClientResponseType> andNot<TListItem>(string fieldName, FilterOperator type, List<TListItem> value) {
-            return not(and(fieldName, type, value));
+            return and(not(fieldName, type, value));
         }
         
-        // TODO orNot
+        public SearchQueryBuilder<TClientResponseType> orNot(SearchQueryBuilder<TClientResponseType> query)
+        {
+            return or(not(query));
+        }
+
+        public SearchQueryBuilder<TClientResponseType> orNot(string fieldName, FilterOperator type, int value) {
+            return or(not(fieldName, type, value));
+        }
+
+        public SearchQueryBuilder<TClientResponseType> orNot(string fieldName, FilterOperator type, float value) {
+            return or(not(fieldName, type, value));
+        }
+
+        public SearchQueryBuilder<TClientResponseType> orNot(string fieldName, FilterOperator type, bool value) {
+            return or(not(fieldName, type, value));
+        }
+
+        public SearchQueryBuilder<TClientResponseType> orNot(string fieldName, FilterOperator type, string value) {
+            return or(not(fieldName, type, value));
+        }
+
+        public SearchQueryBuilder<TClientResponseType> orNot<TListItem>(string fieldName, FilterOperator type, List<TListItem> value) {
+            return or(not(fieldName, type, value));
+        }
 
         public SearchQueryBuilder<TClientResponseType> or(SearchQueryBuilder<TClientResponseType> query) {
             if (treeTop is SearchCondition.Or or1) {

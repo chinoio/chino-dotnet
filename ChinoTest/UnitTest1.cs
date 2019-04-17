@@ -21,30 +21,19 @@ namespace ChinoTest
         private String _collectionId = "";
         private String _repositoryId = "";
         private String _groupId = "";
-
-        [AssemblyInitialize]
-        public static void beforeAll(TestContext ctx)
-        {
-            Const._customerId = Environment.GetEnvironmentVariable("customer_id");
-            Const._customerKey= Environment.GetEnvironmentVariable("customer_key");
-            Const._hostUrl = Environment.GetEnvironmentVariable("host") ?? "https://api.test.chino.io/v1";
-            
-            var test = Environment.GetEnvironmentVariable("automated_test");
-            if (test == null) test = "";
-            if (! test.Equals("allow"))
-            {
-                Console.WriteLine("WARNING: running tests will delete everything on the Chino.io account!");
-                Console.WriteLine("Please set in your environment variables 'automated_test=allow'");
-                Environment.Exit(1);
-            }
-        }
         
         [TestInitialize]
         public void Startup()
         {
+            Const.init();
+            
             Console.WriteLine($"HOST: {Const._hostUrl}");
             Console.WriteLine($"ID  : ********{Const._customerId.Substring(Const._customerId.Length - 5)}");
             Console.WriteLine($"KEY : ********{Const._customerKey.Substring(Const._customerKey.Length - 5)}");
+
+            var chino = new ChinoAPI(Const._hostUrl, Const._customerId, Const._customerKey);
+            Console.WriteLine("Cleanin' up test environment...");
+            Const.deleteAll(chino);
         }
 
 

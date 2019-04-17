@@ -154,8 +154,10 @@ namespace Chino
             return parseJSONWithValue(valuesString.Append("]").ToString(), indentLevel);
         }
 
-        public override StringBuilder getString() {
-            if (field == null || type == null) {
+        public override StringBuilder getString() 
+        {
+            if (field == null || type == null) 
+            {
                 return base.getString();
             }
 
@@ -165,11 +167,12 @@ namespace Chino
                 .Append("[");
 
             // parse list elements
-            if (value.Count != 0)
+            if (value.Count > 0)
                 sb.Append(
                     getValueStringEncoding(value[0])
                 );
-            foreach (var item in value.GetRange(1, value.Count)) {
+            foreach (var item in value.GetRange(1, value.Count-1)) 
+            {
                 sb.Append(", ").Append(getValueStringEncoding(item));
             }
             sb.Append("]");

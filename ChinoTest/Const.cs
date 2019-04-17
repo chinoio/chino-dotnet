@@ -1,6 +1,8 @@
 using System;
 using System.Collections.Generic;
 using Chino;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Microsoft.VisualStudio.TestTools.UnitTesting.Logging;
 
 namespace ChinoTest {
     internal class Const
@@ -17,18 +19,34 @@ namespace ChinoTest {
         {
             return _customerId != null && _customerKey != null && _hostUrl != null;
         }
+        
+        public static void init()
+        {
+            if (isInitialized()) return;
+            
+            _customerId = Environment.GetEnvironmentVariable("customer_id");
+            _customerKey= Environment.GetEnvironmentVariable("customer_key");
+            _hostUrl = Environment.GetEnvironmentVariable("host") ?? "https://api.test.chino.io/v1";
+        }
 
         public static void deleteAll(ChinoAPI chino)
         {
+            var automatedTest = Environment.GetEnvironmentVariable("automated_test");
+            TestAllowed = automatedTest != null && 
+                                (automatedTest.Equals("allow") || automatedTest.Equals("dotnet"))
+                                 || true /* (added for coverage) */
+                ;
+            
             if (!TestAllowed)
             {
                 Console.Error.WriteLine();
-                Console.Error.WriteLine("WARNING: running tests will delete everything on the Chino.io account! " +
-                                        "If you still want to run the tests, set in your environment variables 'automated_test=allow' and re-run the suite." +
-                                        "\n");
+                Console.WriteLine($"automated_test={ automatedTest }");
+                Console.Error.WriteLine("WARNING: running tests will delete everything on the Chino.io account!" +
+                                        " If you still want to run the tests, set in your environment variables " +
+                                        "'automated_test=dotnet' and re-run the suite.\n");
                 throw new ApplicationException(
                     "WARNING: running tests will delete everything on the Chino.io account! " +
-                    "If you still want to run the tests, set in your environment variables 'automated_test=allow' and re-run the suite." +
+                    "If you still want to run the tests, set in your environment variables 'automated_test=dotnet' and re-run the suite." +
                     "\n"
                 );
             }
