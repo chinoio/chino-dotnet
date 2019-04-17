@@ -76,6 +76,8 @@
     <Otherwise />
   </Choose>
   <ItemGroup>
+    <Compile Include="Const.cs" />
+    <Compile Include="SearchUnitTest.cs" />
     <Compile Include="UnitTest1.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <None Include="Resources\attachments\0008mb.pdf">

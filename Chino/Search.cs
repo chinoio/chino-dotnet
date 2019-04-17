@@ -1,10 +1,8 @@
-﻿using Newtonsoft.Json;
+﻿using System;
+using System.Collections.Generic;
+using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using RestSharp;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 
 namespace Chino
 {
@@ -21,30 +19,43 @@ namespace Chino
             this.client = client;
         }
 
+        public DocumentsSearch documents(string schemaId)
+        {
+            return new DocumentsSearch(client, schemaId);
+        }
+
+        public UsersSearch users(string userSchemaId)
+        {
+            return new UsersSearch(client, userSchemaId);
+        }
+        
+        
+        /* OLD SEARCH API - the following API is deprecated and may be removed in a future release */
+        
+        [Obsolete("The old Search API are deprecated and might be removed in a future release. Please considering migrating to the new Search API.")]
         public GetDocumentsResponse searchDocuments(String schemaId, SearchRequest searchRequest)
         {
             RestRequest request = new RestRequest("/search/documents/"+schemaId, Method.POST);
             request.AddJsonBody(searchRequest);
             this.searchRequest = new SearchRequest();
-            this.sort = new List<SortOption>();
-            this.filter = new List<FilterOption>();
-            this.filterOption = new FilterOption();
-        IRestResponse response = client.Execute(request);
+            sort = new List<SortOption>();
+            filter = new List<FilterOption>();
+            filterOption = new FilterOption();
+            IRestResponse response = client.Execute(request);
             if (response.ErrorException != null)
             {
                 throw new ChinoApiException(response.ErrorMessage);
             }
-            JObject o = JObject.Parse(response.Content.ToString());
+            JObject o = JObject.Parse(response.Content);
             if ((int)o["result_code"] == 200)
             {
                 return ((JObject)o["data"]).ToObject<GetDocumentsResponse>();
             }
-            else
-            {
-                throw new ChinoApiException((String)o["message"]);
-            }
+
+            throw new ChinoApiException((String)o["message"]);
         }
 
+        [Obsolete("The old Search API are deprecated and might be removed in a future release. Please considering migrating to the new Search API.")]
         public GetDocumentsResponse searchDocuments(String schemaId, String resultType, Boolean withoutIndex, String filterType, List<SortOption> sort, List<FilterOption> filter){
             SearchRequest searchRequest = new SearchRequest();
             searchRequest.result_type = resultType;
@@ -54,30 +65,30 @@ namespace Chino
             return searchDocuments(schemaId, searchRequest);
         }
 
+        [Obsolete("The old Search API are deprecated and might be removed in a future release. Please considering migrating to the new Search API.")]
         public GetUsersResponse searchUsers(String userSchemaId, SearchRequest searchRequest)
         {
             RestRequest request = new RestRequest("/search/users/" + userSchemaId, Method.POST);
             request.AddJsonBody(searchRequest);
             this.searchRequest = new SearchRequest();
-            this.sort = new List<SortOption>();
-            this.filter = new List<FilterOption>();
-            this.filterOption = new FilterOption();
+            sort = new List<SortOption>();
+            filter = new List<FilterOption>();
+            filterOption = new FilterOption();
             IRestResponse response = client.Execute(request);
             if (response.ErrorException != null)
             {
                 throw new ChinoApiException(response.ErrorMessage);
             }
-            JObject o = JObject.Parse(response.Content.ToString());
+            JObject o = JObject.Parse(response.Content);
             if ((int)o["result_code"] == 200)
             {
                 return ((JObject)o["data"]).ToObject<GetUsersResponse>();
             }
-            else
-            {
-                throw new ChinoApiException((String)o["message"]);
-            }
+
+            throw new ChinoApiException((String)o["message"]);
         }
 
+        [Obsolete("The old Search API are deprecated and might be removed in a future release. Please considering migrating to the new Search API.")]
         public GetUsersResponse searchUsers(String userSchemaId, String resultType, Boolean withoutIndex, String filterType, List<SortOption> sort, List<FilterOption> filter)
         {
             SearchRequest searchRequest = new SearchRequest();
@@ -93,6 +104,7 @@ namespace Chino
          */
 
         //This is called when you want to make a sort of a certain field in an ascending order
+        [Obsolete("The old Search API are deprecated and might be removed in a future release. Please considering migrating to the new Search API.")]
         public Search sortAscBy(String field)
         {
             //This simply adds a new SortOption to the private List "sort" of the class
@@ -104,6 +116,7 @@ namespace Chino
         }
 
         //This is called when you want to make a sort of a certain field in a descending order
+        [Obsolete("The old Search API are deprecated and might be removed in a future release. Please considering migrating to the new Search API.")]
         public Search sortDescBy(String field)
         {
             SortOption sortOption = new SortOption(field, "desc");
@@ -113,6 +126,7 @@ namespace Chino
         }
 
         //This is called when you want to specify a result type. If you don't call this function the default value is "FULL_CONTENT"
+        [Obsolete("The old Search API are deprecated and might be removed in a future release. Please considering migrating to the new Search API.")]
         public Search resultType(String resultType)
         {
             searchRequest.result_type = resultType;
@@ -123,6 +137,7 @@ namespace Chino
          * This is the first function that needs to be called and sets result_type and without_index variables at their default value.
          * It also calls the filterOperation function which creates a new FilterOption and sets its "field" value;
          */ 
+        [Obsolete("The old Search API are deprecated and might be removed in a future release. Please considering migrating to the new Search API.")]
         public Search where(String field)
         {
             searchRequest.result_type = "FULL_CONTENT";
@@ -134,6 +149,7 @@ namespace Chino
          * This is the last function called which sets filter_type to "or" if there is only one FilterOption (initialized by the where(...) function)
          * It sets the schemaId and finally performs the search request, calling the function searchDocuments passing the class variable searchRequest
          */
+        [Obsolete("The old Search API are deprecated and might be removed in a future release. Please considering migrating to the new Search API.")]
         public GetDocumentsResponse searchDocuments(String schemaId)
         {
             if (searchRequest.filter_type == null)
@@ -149,6 +165,7 @@ namespace Chino
         }
 
         //This function is called if you want to make a request with filter_type set to "and" 
+        [Obsolete("The old Search API are deprecated and might be removed in a future release. Please considering migrating to the new Search API.")]
         public Search and(String field)
         {
             //If filter_type value is set to "or" it raises an error
@@ -160,6 +177,7 @@ namespace Chino
         }
 
         //This function is called if you want to make a request with filter_type set to "or"
+        [Obsolete("The old Search API are deprecated and might be removed in a future release. Please considering migrating to the new Search API.")]
         public Search or(String field)
         {
             if (searchRequest.filter_type == "and")
@@ -169,6 +187,7 @@ namespace Chino
         }
 
         //This function creates a new FilterOption and adds it to the private List "filter", then sets the value of the searchRequest.filter variable to the List updated
+        [Obsolete("The old Search API are deprecated and might be removed in a future release. Please considering migrating to the new Search API.")]
         private Search filterOperation(String field)
         {
             filterOption = new FilterOption();
@@ -179,6 +198,7 @@ namespace Chino
         }
 
         //Those functions below set the value and type of the FilterOption
+        [Obsolete("The old Search API are deprecated and might be removed in a future release. Please considering migrating to the new Search API.")]
         public Search eq(Object value)
         {
             filterOption.value = value;
@@ -186,6 +206,7 @@ namespace Chino
             return this;
         }
 
+        [Obsolete("The old Search API are deprecated and might be removed in a future release. Please considering migrating to the new Search API.")]
         public Search gt(Object value)
         {
             filterOption.value = value;
@@ -193,6 +214,7 @@ namespace Chino
             return this;
         }
 
+        [Obsolete("The old Search API are deprecated and might be removed in a future release. Please considering migrating to the new Search API.")]
         public Search gte(Object value)
         {
             filterOption.value = value;
@@ -200,6 +222,7 @@ namespace Chino
             return this;
         }
 
+        [Obsolete("The old Search API are deprecated and might be removed in a future release. Please considering migrating to the new Search API.")]
         public Search lt(Object value)
         {
             filterOption.value = value;
@@ -207,6 +230,7 @@ namespace Chino
             return this;
         }
 
+        [Obsolete("The old Search API are deprecated and might be removed in a future release. Please considering migrating to the new Search API.")]
         public Search lte(Object value)
         {
             filterOption.value = value;
@@ -214,7 +238,11 @@ namespace Chino
             return this;
         }
     }
+    
 
+    /* OLD SEARCH API - the following API is deprecated and may be removed in a future release */
+
+    [Obsolete("The old Search API are deprecated and might be removed in a future release. Please considering migrating to the new Search API.")]
     public class FilterOption
     {
         [JsonProperty(PropertyName = "field")]
@@ -232,6 +260,7 @@ namespace Chino
         }
     }
 
+    [Obsolete("The old Search API are deprecated and might be removed in a future release. Please considering migrating to the new Search API.")]
     public class SortOption
     {
         [JsonProperty(PropertyName = "field")]
@@ -246,6 +275,7 @@ namespace Chino
         }
     }
 
+    [Obsolete("The old Search API are deprecated and might be removed in a future release. Please considering migrating to the new Search API.")]
     public class SearchRequest
     {
         [JsonProperty(PropertyName = "result_type")]

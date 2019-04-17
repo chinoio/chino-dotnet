@@ -1,6 +1,7 @@
 packages/
 TestResults/
 ChinoTest/bin/Debug/attachments/temp/
+start-local.bat
 
 # custom IntelliJ Riders settings
 Chino.sln.DotSettings.user
