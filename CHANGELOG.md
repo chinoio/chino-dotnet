@@ -1,12 +1,16 @@
 # Changelog
 
-### v`0.1` (Current)
-
-#### alpha.3 | apr 17th 2019
+### v`1.0.2` (Current)
+**This SDK is under development and may be unstable. Please report any problem to 
+[tech-support@chino.io](mailto:tech-support@chino.io)**
 
 Marked old Search API as `Obsolete` with a warning shown on compilation.
 
 Added new Search API
+
+#### alpha.2 | mar 11th 2019
+
+Upgraded RestSharp dependency
 
 #### alpha.2 | mar 3rd 2019
 
