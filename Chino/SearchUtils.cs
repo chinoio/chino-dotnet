@@ -388,7 +388,10 @@ namespace Chino
         public override GetDocumentsResponse execute(int offset, int limit)
         {
             var jsonQuery = parseSearchRequest();
-            var searchRequest = new RestRequest($"/search/documents/{ResourceId}", Method.POST, DataFormat.Json);
+            var searchRequest = new RestRequest(
+                $"/search/documents/{ ResourceId }?offset={ offset }&limit={ limit }",
+                Method.POST, DataFormat.Json
+            );
             searchRequest.AddJsonBody(jsonQuery);
             var response = _client.Execute(searchRequest);
             
@@ -409,10 +412,13 @@ namespace Chino
 
     public class UsersSearch : AbstractSearchClient<GetUsersResponse> {
         public UsersSearch(RestClient client, string resourceId) : base(client, resourceId) { }
-        public override GetUsersResponse execute(int offset, int limit)
+        public override GetUsersResponse execute(int offset = 0, int limit = Constants.SearchResultsDefaultLimit)
         {
             var jsonQuery = parseSearchRequest();
-            var searchRequest = new RestRequest($"/search/users/{ResourceId}", Method.POST, DataFormat.Json);
+            var searchRequest = new RestRequest(
+                $"/search/users/{ ResourceId }?offset={ offset }&limit={ limit }",
+                Method.POST, DataFormat.Json
+            );
             searchRequest.AddJsonBody(jsonQuery);
             var response = _client.Execute(searchRequest);
             
