@@ -209,6 +209,12 @@ namespace ChinoTest
             Assert.IsTrue(search.execute().exists);
         }
 
+        [TestMethod]
+        public void testOffsetLimit()
+        {
+            
+        }
+
         [TestCleanup]
         public void cleanUp()
         {
